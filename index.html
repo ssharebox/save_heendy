@@ -499,6 +499,8 @@ a{color:var(--blue)}
 .qr-drawbtn:hover{background:var(--black)}
 .qr-drawbtn:active{border-top-color:var(--dark);border-left-color:var(--dark);border-right-color:var(--white);border-bottom-color:var(--white)}
 .qr-prize{font-family:var(--f-kr);font-size:20px;line-height:1.25;color:var(--blue);text-align:center;text-shadow:2px 2px 0 var(--white);margin-bottom:10px}
+.qr-coupon{font-family:var(--f-kr);font-size:15px;font-weight:700;color:#d92d20;text-align:center;margin-top:10px}      /* "2,000원 할인 쿠폰 증정" 문구 */
+.qr-code{font-family:monospace;font-size:13px;color:#555;text-align:center;margin-top:4px;letter-spacing:1px}          /* 재사용 방지용 고유 쿠폰번호 */
 .qr-prize.dud{color:#666}
 .qr-img{background:var(--white);border:2px solid var(--grayd);color:#7a7a7a;text-align:center;min-height:190px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
@@ -758,9 +760,9 @@ button.deskicon{background:none;border:0}
       <section class="panel">
         <div class="panel-hd"><span class="k">02</span> STAGE 02 · 오류 윈도우 (타임어택)</div>
         <div class="panel-bd">
-          <p class="p-desc">픽셀린의 주특기! <b>30초</b> 동안 에러창을 최대한 많이 꺼보세요. (× 또는 확인) <span class="blip">25개 이상</span>이면 성공!</p>
+          <p class="p-desc">픽셀린의 주특기! <b>15초</b> 동안 에러창을 최대한 많이 꺼보세요. (× 또는 확인) <span class="blip">25개 이상</span>이면 성공!</p>
           <div class="err-hud">
-            <span>남은 시간 <b id="errTime">30</b>s</span>
+            <span>남은 시간 <b id="errTime">15</b>s</span>
             <span>지운 창 <b id="errScore">0</b> / 목표 25</span>
           </div>
           <div class="deskarea" id="desk-error"></div>
@@ -774,9 +776,9 @@ button.deskicon{background:none;border:0}
       <section class="panel">
         <div class="panel-hd"><span class="k">03</span> STAGE 03 · 몬스터 잡기</div>
         <div class="panel-bd">
-          <p class="p-desc">픽셀린의 몬스터가 몰려왔어요! <b>30초</b> 안에 <span class="blip">25마리</span>를 막아주세요! (튀어나온 몬스터를 클릭·터치)</p>
+          <p class="p-desc">픽셀린의 몬스터가 몰려왔어요! <b>15초</b> 안에 <span class="blip">25마리</span>를 막아주세요! (튀어나온 몬스터를 클릭·터치)</p>
           <div class="err-hud">
-            <span>남은 시간 <b id="whTime">30</b>s</span>
+            <span>남은 시간 <b id="whTime">15</b>s</span>
             <span>잡은 몬스터 <b id="whScore">0</b> / 목표 25</span>
           </div>
           <div class="mole-area" id="moleArea"><div class="mole-grid" id="moleGrid"></div></div>
@@ -830,11 +832,6 @@ button.deskicon{background:none;border:0}
             <div class="ql-badge en">LOCKED</div>
             <div class="ql-title">아직 잠겨 있어요</div>
             <div class="ql-msg">앞의 스테이지를 클리어하여 <b class="blip">대원 명찰</b>을 받을 준비를 완료하세요.<br>필요 장비 <b class="ql-count">0/4</b></div>
-          </div>
-          <div class="quiz-lock" id="quizLock" hidden>
-            <div class="ql-badge en">■ LOCKED ■</div>
-            <div class="ql-title">아직 도전할 수 없어요</div>
-            <div class="ql-msg">앞의 스테이지를 클리어하여 <b class="blip">대원 명찰</b>을 받을 준비를 완료하세요.<br>필요 장비 <b class="ql-count">0/4</b> 획득</div>
           </div>
           <div class="term" id="term">
             <div>PIXELIN QUIZ TERMINAL v2.0</div>
@@ -908,7 +905,7 @@ button.deskicon{background:none;border:0}
     </div>
     <div style="color:#e8e8e8">Best viewed in 800×600 · Netscape Navigator 4.0 이상</div>
     <div class="copy">
-      본 페이지는 팬 아카이브 컨셉 데모입니다. · 픽셀린 &amp; DOT LOVE 컨셉: <b>ShareBox (P-SHAREBOX)</b>
+      픽셀린 &amp; DOT LOVE 컨셉: <b>ShareBox (P-SHAREBOX)</b>
     </div>
   </div>
 </div><!-- /win -->
@@ -973,6 +970,8 @@ button.deskicon{background:none;border:0}
       <div id="qrResult" hidden>
         <div class="qr-prize" id="qrPrize">당첨</div>
         <div class="qr-img ic-qr" id="qrImg" role="img" aria-label="랜덤 뽑기 QR"></div>
+        <div class="qr-coupon">2,000원 할인 쿠폰 증정</div>                          <!-- 문구: 결과와 무관하게 항상 표시 -->
+        <div class="qr-code" id="qrCode"></div>                                      <!-- 재사용 방지용 고유 쿠폰번호 -->
         <div class="qr-naver">
           <a class="qr-naverbtn js-naver" target="_blank" rel="noopener"><span class="linkico ic-naver"></span> 네이버 예약하기 <span class="arw">▶</span></a>
         </div>
@@ -1222,17 +1221,16 @@ if(gm){
 }
 
 /* =========================================================
-   4. STAGE 02 · 오류 윈도우 타임어택 (30초 · 25개↑ 성공)
+   4. STAGE 02 · 오류 윈도우 타임어택 (15초 · 25개↑ 성공)
    ========================================================= */
 var ERR_MSGS = ['도트가 너무 귀여워서 시스템이 멈췄습니다.','PIXELIN.exe 이(가) 응답하지 않습니다.',
   '접근 거부: 이 구역은 픽셀린이 점령했습니다.','메롱~♥ 이 창은 닫을 수 없어… 농담이야.','메모리 부족: 도트 사랑이 넘칩니다.'];
-var ERR_GOAL = 25, ERR_SEC = 30, ERR_MAX_WIN = 8;
+var ERR_GOAL = 25, ERR_SEC = 15, ERR_MAX_WIN = 8;
 
 var errTpl   = $('errTpl'),
     desk     = $('desk-error'),
     errTimeEl= $('errTime'),
-    errScoreEl=$('errScore'),
-    errBtn   = $('errStart');
+    errScoreEl=$('errScore');
 
 var errRun = false, errScore = 0, errTime = ERR_SEC,
     errSpawnIv = null, errTickIv = null, errW = 0, errH = 0;
@@ -1290,7 +1288,6 @@ function errEnd(){
   errStop();
   var ok = errScore >= ERR_GOAL;
   var isNew = ok && grant('headset');
-  if(errBtn){ errBtn.textContent = '다시 ▶'; errBtn.disabled = false; }
   showStageEnd({
     host:desk, stage:'stage-error',
     title: ok ? '★ STAGE 02 CLEAR ★' : 'MISSION FAILED',
@@ -1301,15 +1298,14 @@ function errEnd(){
     onReplay:function(){ errStart(); }
   });
 }
-if(errBtn) errBtn.addEventListener('click', errStart);
 
 /* =========================================================
-   5. STAGE 03 · 픽셀린 잡기 (9구멍 · 30초 · 25마리)
+   5. STAGE 03 · 픽셀린 잡기 (9구멍 · 15초 · 25마리)
       타이머: 두더지마다 setTimeout → 단일 루프로 통합
    ========================================================= */
-var WH_GOAL = 25, WH_SEC = 30;
+var WH_GOAL = 25, WH_SEC = 15;
 var moleArea = $('moleArea'), moleGrid = $('moleGrid'),
-    whTimeEl = $('whTime'), whScoreEl = $('whScore'), whBtn = $('whStart');
+    whTimeEl = $('whTime'), whScoreEl = $('whScore');
 
 var holes = [];
 var whRun = false, whScore = 0, whTime = WH_SEC,
@@ -1411,7 +1407,6 @@ function whEnd(){
   for(var i=0;i<holes.length;i++) holes[i].classList.remove('up','hit');
   var ok = whScore >= WH_GOAL;
   var isNew = ok && grant('vest');
-  if(whBtn){ whBtn.textContent = '다시 ▶'; whBtn.disabled = false; }
   showStageEnd({
     host:moleArea, stage:'stage-zap',
     title: ok ? '★ STAGE 03 CLEAR ★' : 'MISSION FAILED',
@@ -1422,7 +1417,6 @@ function whEnd(){
     onReplay:function(){ whStart(); }
   });
 }
-if(whBtn) whBtn.addEventListener('click', whStart);
 
 /* =========================================================
    6. STAGE 04 · 도트 포탈
@@ -1671,7 +1665,8 @@ document.addEventListener('keydown', function(e){
 var QR_PW = '0000';                                             /* 비밀번호 변경 지점 */
 var QR_POOL = ['당첨 1','당첨 2','당첨 3','당첨 4','당첨 5','꽝','꽝','꽝']; /* 확률 조정 지점 */
 var qrModal=$('qrModal'), qrPwStage=$('qrPwStage'), qrResultEl=$('qrResult'),
-    qrPwInput=$('qrPwInput'), qrPwMsg=$('qrPwMsg'), qrPrize=$('qrPrize'), qrImgLab=$('qrImgLab');
+    qrPwInput=$('qrPwInput'), qrPwMsg=$('qrPwMsg'), qrPrize=$('qrPrize'), qrImgLab=$('qrImgLab'),
+    qrCode=$('qrCode');
 function qrOpen(){
   if(!qrModal) return;
   qrPwStage.hidden=false; qrResultEl.hidden=true;
@@ -1680,11 +1675,20 @@ function qrOpen(){
   qrPwInput.focus();
 }
 function qrClose(){ if(qrModal) qrModal.hidden=true; }
+function genCouponCode(){                                       /* 재사용 방지용 고유 쿠폰번호 생성 (날짜+시간+랜덤) */
+  var d = new Date();
+  var p = function(n){ return (n<10?'0':'')+n; };
+  var ymd = String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate());
+  var hms = p(d.getHours())+p(d.getMinutes())+p(d.getSeconds());
+  var rand = Math.floor(100 + Math.random()*900);
+  return 'SB-' + ymd + '-' + hms + '-' + rand;
+}
 function qrDraw(){
   var r = QR_POOL[Math.floor(Math.random()*QR_POOL.length)];
   var dud = (r === '꽝');
   qrPrize.textContent = dud ? '꽝! 메롱~♥' : ('★ ' + r + ' ★');
   qrPrize.classList.toggle('dud', dud);
+  qrCode.textContent = '쿠폰번호 ' + genCouponCode() + ' (계산 시 제시, 1회만 사용 가능)';
   qrPwStage.hidden=true; qrResultEl.hidden=false;
 }
 function qrCheck(){
