@@ -423,7 +423,7 @@ a{color:var(--blue)}
 .pw-lead{font-family:var(--f-sm);font-size:13px;margin-bottom:10px}
 .pw-input{width:100%;font-family:var(--f-kr);font-size:18px;letter-spacing:4px;text-align:center;padding:9px;
   background:var(--white);color:var(--black)}
-.pw-msg{font-family:var(--f-sm);font-size:12px;color:var(--blue);min-height:16px;margin:9px 0}
+.pw-msg{font-family:var(--f-sm);font-size:12px;color:var(--blue);min-height:16px;margin:9px 0;line-height:1.5}
 .pw-msg.ok{color:var(--blue);font-family:var(--f-kr);font-size:14px}
 .pw-actions{display:flex;gap:8px;justify-content:center;margin-top:6px}
 .pw-actions .gbtn{margin:0}
@@ -1640,7 +1640,7 @@ function pwCheck(){
   if((pwInput.value || '').trim() === HIDDEN_PW){
     pwStage.hidden = true; pwRevealEl.hidden = false;
   } else {
-    pwMsg.textContent = '메롱~♥ 땡! 다시 입력해봐.';
+    pwMsg.innerHTML = '메롱~♥ 땡! 다시 입력해봐.<br>퀴즈를 전부 풀고 안내요원에게 방문하여 비밀번호를 받으세요.';
   }
 }
 var dl = $('dotloveBtn');
@@ -1694,7 +1694,7 @@ function qrDraw(){
 }
 function qrCheck(){
   if((qrPwInput.value || '').trim() === QR_PW){ qrDraw(); }
-  else { qrPwMsg.textContent = '메롱~♥ 땡! 다시 입력해봐.'; }
+  else { qrPwMsg.innerHTML = '메롱~♥ 땡! 다시 입력해봐.<br>퀴즈를 전부 풀고 안내요원에게 방문하여 비밀번호를 받으세요.'; }
 }
 $$('.js-qrdraw').forEach(function(btn){ btn.addEventListener('click', qrOpen); });
 ['qrClose','qrPwCancel','qrDone'].forEach(function(id){ var e=$(id); if(e) e.addEventListener('click', qrClose); });
