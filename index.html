@@ -1669,7 +1669,7 @@ document.addEventListener('keydown', function(e){
    10. 랜덤 뽑기 (비밀번호 0000 → 결과 → 네이버 예약 링크)
    ========================================================= */
 var QR_PW = '0903';                                             /* 비밀번호 변경 지점 */
-var QR_POOL = ['당첨 1','당첨 2','당첨 3','당첨 4','당첨 5','꽝','꽝','꽝']; /* 확률 조정 지점 */
+var QR_POOL = ['당첨']; /* 확률 조정 지점 — 항상 당첨 */
 var qrModal=$('qrModal'), qrPwStage=$('qrPwStage'), qrResultEl=$('qrResult'),
     qrPwInput=$('qrPwInput'), qrPwMsg=$('qrPwMsg'), qrPrize=$('qrPrize'), qrImgLab=$('qrImgLab'),
     qrCode=$('qrCode');
@@ -1690,10 +1690,7 @@ function genCouponCode(){                                       /* 재사용 방
   return 'SB-' + ymd + '-' + hms + '-' + rand;
 }
 function qrDraw(){
-  var r = QR_POOL[Math.floor(Math.random()*QR_POOL.length)];
-  var dud = (r === '꽝');
-  qrPrize.textContent = dud ? '꽝! 메롱~♥' : ('★ ' + r + ' ★');
-  qrPrize.classList.toggle('dud', dud);
+  qrPrize.textContent = '★ 당첨 ★';
   qrCode.textContent = '쿠폰번호 ' + genCouponCode() + ' (계산 시 제시, 1회만 사용 가능)';
   qrPwStage.hidden=true; qrResultEl.hidden=false;
 }
