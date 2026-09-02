@@ -501,6 +501,9 @@ a{color:var(--blue)}
 .qr-prize{font-family:var(--f-kr);font-size:20px;line-height:1.25;color:var(--blue);text-align:center;text-shadow:2px 2px 0 var(--white);margin-bottom:10px}
 .qr-coupon{font-family:var(--f-kr);font-size:15px;font-weight:700;color:#d92d20;text-align:center;margin-top:10px}      /* "2,000원 할인 쿠폰 증정" 문구 */
 .qr-code{font-family:monospace;font-size:13px;color:#555;text-align:center;margin-top:4px;letter-spacing:1px}          /* 재사용 방지용 고유 쿠폰번호 */
+.qr-note{font-family:var(--f-sm);font-size:12px;color:#555;text-align:center;margin-top:10px;line-height:1.6;padding-top:10px;border-top:1px dashed var(--grayd)}
+.qr-note b{color:var(--blue)}
+.qr-terms{font-family:var(--f-sm);font-size:10px;color:#999;text-align:center;margin-top:6px;line-height:1.5}
 .qr-prize.dud{color:#666}
 .qr-img{background:var(--white);border:2px solid var(--grayd);color:#7a7a7a;text-align:center;min-height:190px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
@@ -973,6 +976,8 @@ button.deskicon{background:none;border:0}
         <div class="qr-img ic-qr" id="qrImg" role="img" aria-label="랜덤 뽑기 QR"></div>
         <div class="qr-coupon">2,000원 할인 쿠폰 증정</div>                          <!-- 문구: 결과와 무관하게 항상 표시 -->
         <div class="qr-code" id="qrCode"></div>                                      <!-- 재사용 방지용 고유 쿠폰번호 -->
+        <div class="qr-note">본 화면을 촬영해서 제시하면 굿즈 할인!<br>할인 가능한 굿즈 품목: <b>세이브 흰디 특별 제작 굿즈 by 멍주</b></div>
+        <div class="qr-terms">* 1인(팀)당 쿠폰 1회만 사용 가능 · 타 할인·쿠폰과 중복 사용 불가 · 행사 기간 내에서만 사용 가능</div>
         <div class="qr-naver">
           <a class="qr-naverbtn js-naver" target="_blank" rel="noopener"><span class="linkico ic-naver"></span> 네이버 예약하기 <span class="arw">▶</span></a>
         </div>
