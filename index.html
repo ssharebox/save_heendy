@@ -900,7 +900,7 @@ button.deskicon{background:none;border:0}
       <a class="js-naver" target="_blank" rel="noopener"><span class="linkico ic-naver"></span> 네이버 예약하기</a>
     </div>
     <div>누적 방문자
-      <span class="counter"><span>0</span><span>0</span><span>2</span><span>0</span><span>2</span><span>X</span></span>
+      <span class="counter" id="visitCounter"><span>0</span><span>0</span><span>2</span><span>0</span><span>2</span><span>6</span></span>
       명째 도트 세계에 접속했어요</div>
     <div class="badges">
       <span class="badge b1" id="dotloveBtn" role="button" tabindex="0" title="눌러보세요!" style="cursor:pointer">⚡ DOT LOVE ⚡</span>
@@ -1708,14 +1708,6 @@ document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && qrMod
 /* =========================================================
    10. 초기화
    ========================================================= */
-var PRIOR_GEAR = ['goggles','headset','vest','helmet'];
-function quizGate(){
-  var lock = $('quizLock'), term = $('term');
-  var have = 0; for(var i=0;i<PRIOR_GEAR.length;i++){ if(owned[PRIOR_GEAR[i]]) have++; }
-  var locked = have < 4;
-  if(lock){ lock.hidden = !locked; var c = lock.querySelector('.ql-count'); if(c) c.textContent = have + '/4'; }
-  if(term) term.hidden = locked;
-}
 function quizGate(){
   var have = 0;
   ['goggles','headset','vest','helmet'].forEach(function(k){ if(owned[k]) have++; });
@@ -1728,6 +1720,25 @@ buildGearLists();
 renderAvatar();
 renderQ();
 route();
+
+/* =========================================================
+   11. 누적 방문자 카운터 (countapi 무료 서비스 연동, 가입 불필요)
+   실패해도 화면에 보이는 고정 숫자가 그대로 남으므로 사이트 동작에는 영향 없음
+   ========================================================= */
+(function(){
+  var COUNTER_KEY = 'sharebox-savemyheendy-pixelinnet-2026'; /* 다른 사이트와 안 겹치도록 고유하게 지어둔 키 */
+  var el = $('visitCounter');
+  if(!el) return;
+  fetch('https://countapi.mileshilliard.com/api/v1/hit/' + COUNTER_KEY)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var n = parseInt(data && data.value, 10);
+      if(isNaN(n)) return;
+      var digits = String(n).slice(-6).padStart(6, '0').split('');
+      el.innerHTML = digits.map(function(d){ return '<span>' + d + '</span>'; }).join('');
+    })
+    .catch(function(){ /* 서비스 응답 없으면 기존 고정 숫자 그대로 둠 */ });
+})();
 
 })();
 </script>
