@@ -514,6 +514,12 @@ a{color:var(--blue)}
 .qr-note b{color:var(--blue)}
 .qr-terms{font-family:var(--f-sm);font-size:10px;color:#999;text-align:center;margin-top:8px;line-height:1.5}
 .qr-prize.dud{color:#666}
+.qr-drawwait{text-align:center}
+.qr-giftbox{width:110px;height:110px;margin:8px auto 16px;background:var(--white);border:2px solid var(--grayd);
+  display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:3px 4px 0 #00000033}
+.qr-giftbox.shaking{animation:shake .45s ease-in-out infinite}
+@keyframes shake{0%,100%{transform:translateX(0) rotate(0deg)}20%{transform:translateX(-6px) rotate(-7deg)}40%{transform:translateX(5px) rotate(6deg)}60%{transform:translateX(-5px) rotate(-5deg)}80%{transform:translateX(4px) rotate(4deg)}}
+.qr-drawwait .qr-drawbtn:disabled{opacity:.6;cursor:default}
 .qr-img{background:var(--white);border:2px solid var(--grayd);color:#7a7a7a;text-align:center;min-height:190px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 #qrImg{background-size:150px auto;background-repeat:no-repeat;background-position:center}       /* 새 QR 이미지 크기에 맞춰 박스 안에 꽉 차지 않고 적당한 크기로 표시 */
@@ -979,6 +985,11 @@ button.deskicon{background:none;border:0}
         <input id="qrPwInput" class="pw-input" type="password" inputmode="numeric" maxlength="8" placeholder="● ● ● ●" autocomplete="off">
         <div class="pw-msg" id="qrPwMsg"></div>
         <div class="pw-actions"><button class="gbtn en" id="qrPwOk" type="button">확인</button><button class="gbtn en" id="qrPwCancel" type="button">취소</button></div>
+      </div>
+      <div id="qrDrawStage" class="qr-drawwait" hidden>
+        <p class="pw-lead">비밀번호 확인 완료! 상자를 눌러 뽑아보세요.</p>
+        <div class="qr-giftbox" id="qrGiftbox">🎁</div>
+        <button class="qr-drawbtn" id="qrDrawGo" type="button">뽑기!</button>
       </div>
       <div id="qrResult" hidden>
         <div class="qr-prize" id="qrPrize">당첨</div>
@@ -1679,12 +1690,12 @@ document.addEventListener('keydown', function(e){
    ========================================================= */
 var QR_PW = '0903';                                             /* 비밀번호 변경 지점 */
 var QR_POOL = ['당첨']; /* 확률 조정 지점 — 항상 당첨 */
-var qrModal=$('qrModal'), qrPwStage=$('qrPwStage'), qrResultEl=$('qrResult'),
+var qrModal=$('qrModal'), qrPwStage=$('qrPwStage'), qrDrawStage=$('qrDrawStage'), qrResultEl=$('qrResult'),
     qrPwInput=$('qrPwInput'), qrPwMsg=$('qrPwMsg'), qrPrize=$('qrPrize'), qrImgLab=$('qrImgLab'),
-    qrCode=$('qrCode');
+    qrCode=$('qrCode'), qrGiftbox=$('qrGiftbox'), qrDrawGo=$('qrDrawGo'), qrShaking=false;
 function qrOpen(){
   if(!qrModal) return;
-  qrPwStage.hidden=false; qrResultEl.hidden=true;
+  qrPwStage.hidden=false; qrDrawStage.hidden=true; qrResultEl.hidden=true;
   qrPwInput.value=''; qrPwMsg.textContent='';
   qrModal.hidden=false;
   qrPwInput.focus();
@@ -1701,10 +1712,23 @@ function genCouponCode(){                                       /* 재사용 방
 function qrDraw(){
   qrPrize.textContent = '당첨';
   qrCode.innerHTML = '쿠폰번호 ' + genCouponCode() + '<small>(계산 시 제시, 1회만 사용 가능)</small>';
-  qrPwStage.hidden=true; qrResultEl.hidden=false;
+  qrDrawStage.hidden=true; qrResultEl.hidden=false;
 }
+function qrShakeAndDraw(){                                       /* 뽑기 상자를 흔들다가 결과 공개 */
+  if(qrShaking) return;
+  qrShaking = true;
+  qrDrawGo.disabled = true;
+  qrGiftbox.classList.add('shaking');
+  setTimeout(function(){
+    qrGiftbox.classList.remove('shaking');
+    qrDrawGo.disabled = false;
+    qrShaking = false;
+    qrDraw();
+  }, reduce ? 150 : 1000);
+}
+if(qrDrawGo) qrDrawGo.addEventListener('click', qrShakeAndDraw);
 function qrCheck(){
-  if((qrPwInput.value || '').trim() === QR_PW){ qrDraw(); }
+  if((qrPwInput.value || '').trim() === QR_PW){ qrPwStage.hidden=true; qrDrawStage.hidden=false; }
   else { qrPwMsg.innerHTML = '메롱~♥ 땡! 다시 입력해봐.<br>퀴즈를 전부 풀고 안내요원에게 방문하여 비밀번호를 받으세요.'; }
 }
 $$('.js-qrdraw').forEach(function(btn){ btn.addEventListener('click', qrOpen); });
