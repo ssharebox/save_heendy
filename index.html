@@ -343,7 +343,7 @@ a{color:var(--blue)}
   padding:12px;background:#000000b3;animation:seIn .16s steps(2)}
 .stage-end.inline{position:static;background:none;padding:12px 0 0;animation:none}
 @keyframes seIn{from{opacity:0}to{opacity:1}}
-.se-box{width:min(330px,100%);background:var(--gray);padding:3px;box-shadow:4px 5px 0 #00000066}
+.se-box{width:min(330px,100%);background:var(--gray);padding:3px;box-shadow:4px 5px 0 #00000066;animation:pop .3s ease-out}
 .stage-end.inline .se-box{width:min(400px,100%);margin:0 auto}
 .se-hd{background:var(--blue);color:var(--white);font-family:var(--f-en);font-size:9px;
   padding:8px;text-align:center;line-height:1.5}
@@ -352,11 +352,12 @@ a{color:var(--blue)}
 /* 스코어 = 크게 / 아이템 = 스코어 바로 옆 */
 .se-scorerow{display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap}
 .se-scorewrap{min-width:90px}
-.se-score{font-family:var(--f-en);font-size:30px;line-height:1.1;color:var(--blue);text-shadow:2px 2px 0 var(--white)}
+.se-score{font-family:var(--f-en);font-size:30px;line-height:1.1;color:var(--blue);text-shadow:2px 2px 0 var(--white);display:inline-block;animation:pop .4s ease-out .1s both}
 .se-score.sm{font-size:19px}
 .se-scorelab{font-family:var(--f-sm);font-size:11px;color:#555;margin-top:7px}
 .se-item{display:flex;align-items:center;gap:8px;max-width:165px;text-align:left;background:var(--white);padding:8px 9px}
-.se-item.got{background:var(--blue);color:var(--white)}
+.se-item.got{background:var(--blue);color:var(--white);position:relative;overflow:hidden;animation:pop .4s ease-out .18s both}
+.se-item.got::after{content:'✦';position:absolute;top:3px;right:6px;font-size:11px;color:var(--white);animation:twinkle 1.3s ease-in-out infinite .2s}
 .se-item .se-ic{width:24px;height:24px;flex:0 0 24px;display:flex;align-items:center;justify-content:center;
   background-color:var(--gray2);border:1px solid var(--black);font-family:var(--f-en);font-size:9px;color:var(--blue)}
 .se-item.got .se-ic{background-color:var(--white)}
@@ -430,7 +431,7 @@ a{color:var(--blue)}
 #pwReveal .imgbox{min-height:150px}
 #pwModal .mwin{width:640px;max-width:96vw}                 /* 히든 이미지 창 자체를 더 크게 */
 #pwReveal .imgbox{min-height:0;aspect-ratio:960/717;width:100%;border:none;padding:0;background-color:#0b0b0b}  /* 테두리/여백 없애고 이미지 비율에 꽉 차게 */
-#pwReveal{padding:0}
+#pwReveal{padding:0;animation:pop .35s ease-out}
 
 /* ---------- 아이템 획득 토스트 ---------- */
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(18px);
@@ -498,12 +499,20 @@ a{color:var(--blue)}
   border:2px solid var(--black);border-top-color:var(--white);border-left-color:var(--white);border-right-color:var(--dark);border-bottom-color:var(--dark)}
 .qr-drawbtn:hover{background:var(--black)}
 .qr-drawbtn:active{border-top-color:var(--dark);border-left-color:var(--dark);border-right-color:var(--white);border-bottom-color:var(--white)}
-.qr-prize{font-family:var(--f-kr);font-size:20px;line-height:1.25;color:var(--blue);text-align:center;text-shadow:2px 2px 0 var(--white);margin-bottom:10px}
-.qr-coupon{font-family:var(--f-kr);font-size:15px;font-weight:700;color:#d92d20;text-align:center;margin-top:10px}      /* "2,000원 할인 쿠폰 증정" 문구 */
-.qr-code{font-family:monospace;font-size:13px;color:#555;text-align:center;margin-top:4px;letter-spacing:1px}          /* 재사용 방지용 고유 쿠폰번호 */
-.qr-note{font-family:var(--f-sm);font-size:12px;color:#555;text-align:center;margin-top:10px;line-height:1.6;padding-top:10px;border-top:1px dashed var(--grayd)}
+.qr-prize{font-family:var(--f-kr);font-size:22px;line-height:1.25;color:var(--blue);text-align:center;text-shadow:2px 2px 0 var(--white);margin-bottom:10px;position:relative}
+.qr-prize::before,.qr-prize::after{content:'✦';display:inline-block;margin:0 8px;color:var(--blue);animation:twinkle 1.4s ease-in-out infinite}
+.qr-prize::after{animation-delay:.35s}
+@keyframes twinkle{0%,100%{opacity:1;transform:scale(1) rotate(0deg)}50%{opacity:.35;transform:scale(.7) rotate(20deg)}}
+#qrResult{animation:pop .35s ease-out}
+.qr-coupon{display:block;width:fit-content;font-family:var(--f-kr);font-size:14px;font-weight:700;color:var(--white);background:var(--blue);border:1px solid var(--black);padding:6px 14px;margin:10px auto 0;text-align:center;position:relative;overflow:hidden;transform:rotate(-1.2deg)}      /* "2,000원 할인 쿠폰 증정" 배지 — 가운데 정렬, 살짝 기울인 스탬프 느낌 */
+.qr-coupon::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(115deg,transparent,#ffffff55,transparent);animation:shine 2.6s ease-in-out infinite}
+@keyframes shine{0%{left:-60%}55%,100%{left:130%}}
+.qr-code{font-family:monospace;font-size:13px;color:#555;text-align:center;margin-top:10px;letter-spacing:1px;display:inline-block;border:1px dashed var(--grayd);padding:5px 10px;position:relative;left:50%;transform:translateX(-50%)}          /* 재사용 방지용 고유 쿠폰번호 — 티켓 스텁 느낌 */
+.qr-code small{display:block;font-family:var(--f-sm);font-size:10px;letter-spacing:0;margin-top:3px;color:#999}
+.qr-note{font-family:var(--f-kr);font-size:13px;color:var(--black);text-align:center;margin-top:14px;line-height:1.6;padding-top:16px;position:relative}
+.qr-note::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background-image:radial-gradient(circle,var(--grayd) 1.4px,transparent 1.5px);background-size:9px 2px;background-repeat:repeat-x}      /* 티켓 절취선(펀칭 구멍) 느낌 구분선 */
 .qr-note b{color:var(--blue)}
-.qr-terms{font-family:var(--f-sm);font-size:10px;color:#999;text-align:center;margin-top:6px;line-height:1.5}
+.qr-terms{font-family:var(--f-sm);font-size:10px;color:#999;text-align:center;margin-top:8px;line-height:1.5}
 .qr-prize.dud{color:#666}
 .qr-img{background:var(--white);border:2px solid var(--grayd);color:#7a7a7a;text-align:center;min-height:190px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
@@ -976,8 +985,8 @@ button.deskicon{background:none;border:0}
         <div class="qr-img ic-qr" id="qrImg" role="img" aria-label="랜덤 뽑기 QR"></div>
         <div class="qr-coupon">2,000원 할인 쿠폰 증정</div>                          <!-- 문구: 결과와 무관하게 항상 표시 -->
         <div class="qr-code" id="qrCode"></div>                                      <!-- 재사용 방지용 고유 쿠폰번호 -->
-        <div class="qr-note">본 화면을 촬영해서 제시하면 굿즈 할인!<br>할인 가능한 굿즈 품목: <b>세이브 흰디 특별 제작 굿즈 by 멍주</b></div>
-        <div class="qr-terms">* 1인(팀)당 쿠폰 1회만 사용 가능 · 타 할인·쿠폰과 중복 사용 불가 · 행사 기간 내에서만 사용 가능</div>
+        <div class="qr-note">📸 본 화면을 촬영해서 제시하면 굿즈 할인!<br>할인 품목: <b>세이브 흰디 특별 제작 굿즈</b><br><b>by 멍주</b></div>
+        <div class="qr-terms">* 1인 1회 · 중복 할인 불가 · 행사 기간 내 사용</div>
         <div class="qr-naver">
           <a class="qr-naverbtn js-naver" target="_blank" rel="noopener"><span class="linkico ic-naver"></span> 네이버 예약하기 <span class="arw">▶</span></a>
         </div>
@@ -1011,7 +1020,7 @@ function rnd(n){ return Math.floor(Math.random()*n); }
 
 /* ★ 실제 링크 주소를 여기에 입력하세요 ------------------------------ */
 var OFFICIAL_URL = 'http://www.ssharebox.com/';   /* 쉐어박스 홈페이지 */
-var NAVER_URL    = 'https://booking.naver.com/error/ticket?type=InvalidBusiness&url=https%253A%252F%252Fbooking.naver.com%252Fbooking%252F12%252Fbizes%252F1727029';
+var NAVER_URL    = 'https://m.booking.naver.com/booking/12/bizes/1727029/items/8008056?area=ple&lang=ko&theme=place';
 /* ------------------------------------------------------------------ */
 $$('.js-home').forEach(function(e){ e.href = OFFICIAL_URL; });
 $$('.js-naver').forEach(function(e){ e.href = NAVER_URL; });
@@ -1690,8 +1699,8 @@ function genCouponCode(){                                       /* 재사용 방
   return 'SB-' + ymd + '-' + hms + '-' + rand;
 }
 function qrDraw(){
-  qrPrize.textContent = '★ 당첨 ★';
-  qrCode.textContent = '쿠폰번호 ' + genCouponCode() + ' (계산 시 제시, 1회만 사용 가능)';
+  qrPrize.textContent = '당첨';
+  qrCode.innerHTML = '쿠폰번호 ' + genCouponCode() + '<small>(계산 시 제시, 1회만 사용 가능)</small>';
   qrPwStage.hidden=true; qrResultEl.hidden=false;
 }
 function qrCheck(){
