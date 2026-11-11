@@ -1096,6 +1096,29 @@ html,body,*{touch-action:manipulation}
 .mobile-widgets .bandbtn:hover .linkico{transform:translateY(-2px)}
 .mobile-widgets .bandbtn:active .linkico{transform:translate(1px,2px);box-shadow:none;filter:none}
 @media (max-width:340px){.mobile-widgets .bandbtn .linkico,.mobile-widgets .bandbtn .linkico.ic-gacha{width:42px;height:42px;flex-basis:42px;background-size:contain}}
+
+/* 퀴즈를 다 푼 뒤: 파란 설명 창 대신 빨간 ALL CLEAR 확인 도장 */
+.clearbar{display:block;width:fit-content;margin:10px auto 24px;padding:13px 22px 9px;background:rgba(255,255,255,.95);
+  color:#e0303a;font-size:21px;letter-spacing:1px;line-height:1.3;border:5px solid #e0303a;outline:2px solid #e0303a;outline-offset:4px;
+  box-shadow:0 0 0 10px rgba(255,255,255,.95);transform:rotate(-10deg);animation:none}
+.reveal.show .clearbar{animation:stampIn .45s cubic-bezier(.2,1.5,.4,1) both}
+@media (max-width:340px){.clearbar{font-size:17px;padding:11px 16px 8px}}
+
+/* =========================================================
+   ★ 터치 반응 — 창이 눌려 꺼지는 연출, 넓은 터치 범위, 게임 중 스크롤 잠금
+   ========================================================= */
+.deskarea.playing,.mole-grid.playing{touch-action:none}
+.errwin .eb,.errwin .ef{cursor:pointer}
+.errwin .ef{padding-top:4px}
+.errwin .x.pressed,.errwin .ok.pressed{background:var(--blue);color:#fff;transform:translate(1px,2px);
+  border-top-color:var(--dark);border-left-color:var(--dark);border-right-color:#fff;border-bottom-color:#fff}
+.errwin.closing{pointer-events:none;box-shadow:none;animation:winPress .19s steps(4) forwards}
+@keyframes winPress{0%{transform:translate(0,0)}30%{transform:translate(4px,5px);filter:brightness(.78)}60%{transform:translate(4px,5px) scale(.95);filter:brightness(.78)}100%{transform:translate(4px,5px) scale(.8);opacity:0}}
+.plus1{position:absolute;z-index:5;font-size:14px;color:#fff;text-shadow:2px 2px 0 var(--blue);pointer-events:none;animation:plus1 .48s ease-out forwards}
+.all-clear .plus1{color:#ff4f9a;text-shadow:2px 2px 0 #fff}
+@keyframes plus1{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-34px);opacity:0}}
+.hole{cursor:pointer}
+.hole.hit{box-shadow:inset 0 0 0 3px #fff}
 </style>
 </head>
 <body>
@@ -1341,7 +1364,7 @@ html,body,*{touch-action:manipulation}
           </div>
 
           <div class="reveal" id="reveal">
-            <div class="clearbar en">★ ALL CLEAR ★</div>
+            <div class="clearbar en">ALL CLEAR</div>
             <div class="rescue" id="frame">
               <div class="agent-shot">
                 <div class="imgph portrait ic-quizfull" role="img" aria-label="구조대원 픽셀린"></div>
@@ -2014,7 +2037,7 @@ function errSet(){
   if(errScoreEl) errScoreEl.textContent = errScore;
 }
 function spawnError(){
-  if(!desk || desk.childElementCount >= ERR_MAX_WIN) return;
+  if(!desk || desk.querySelectorAll('.errwin:not(.closing)').length >= ERR_MAX_WIN) return;
   var w = errTpl.content.firstElementChild.cloneNode(true);
   var ww = Math.min(230, errW - 10);                /* 좁은 화면(폴드 커버 등)에서는 창을 게임판 너비에 맞춤 */
   w.style.width = ww + 'px';
@@ -2028,19 +2051,46 @@ function spawnError(){
   }
   desk.appendChild(w);
 }
-/* 이벤트 위임: 창마다 리스너를 달지 않음 */
+/* 짧은 진동 (지원하는 폰에서만) */
+function buzz(){ try{ if(navigator.vibrate) navigator.vibrate(12); }catch(e){} }
+
+/* 창 닫기: 버튼이 눌리고 창이 푹 꺼지는 연출 후 제거 */
+function errCloseWin(w, btn){
+  if(!w || w._dead) return;
+  w._dead = true;
+  if(btn) btn.classList.add('pressed');
+  w.classList.add('closing');
+  if(errRun){ errScore++; errSet(); }
+  buzz();
+  if(!reduce){                                      /* +1 표시 */
+    var p1 = document.createElement('span');
+    p1.className = 'plus1 en'; p1.textContent = '+1';
+    p1.style.left = (w.offsetLeft + w.offsetWidth / 2 - 14) + 'px';
+    p1.style.top  = (w.offsetTop + 8) + 'px';
+    desk.appendChild(p1);
+    setTimeout(function(){ p1.remove(); }, 480);
+  }
+  setTimeout(function(){ w.remove(); }, reduce ? 0 : 190);
+}
+/* 터치 인식 범위를 넓힘: × 주변(제목줄 오른쪽 끝), 확인 버튼이 있는 아래 줄 전체 */
+function errPick(e){
+  var t = e.target; if(!t || !t.closest) return;
+  var w = t.closest('.errwin'); if(!w || w._dead) return;
+  var btn = null;
+  if(t.closest('.x')) btn = w.querySelector('.x');
+  else if(t.closest('.ef')) btn = w.querySelector('.ok');
+  else if(t.closest('.eb') && e.clientX >= w.getBoundingClientRect().right - 70) btn = w.querySelector('.x');
+  if(btn) errCloseWin(w, btn);
+}
+/* 손가락이 닿는 순간(pointerdown) 바로 처리 — 뗄 때까지 기다리거나 살짝 미끄러져서 놓치는 일이 없음 */
+var errLastPD = 0;
 if(desk){
-  desk.addEventListener('click', function(e){
-    var t = e.target;
-    if(!t.classList.contains('x') && !t.classList.contains('ok')) return;
-    var w = t.closest('.errwin');
-    if(!w) return;
-    w.remove();
-    if(errRun){ errScore++; errSet(); }
-  });
+  desk.addEventListener('pointerdown', function(e){ errLastPD = now(); errPick(e); });
+  desk.addEventListener('click', function(e){ if(now() - errLastPD > 450) errPick(e); });   /* 키보드 등 보조 입력용 */
 }
 function errStop(){
   errRun = false;
+  if(desk) desk.classList.remove('playing');
   clearInterval(errSpawnIv); clearInterval(errTickIv);
 }
 function errReset(){
@@ -2056,6 +2106,7 @@ function errStart(){
   errStop(); clearStageEnd(errEndHost);
   errScore = 0; errTime = ERR_SEC; errSet();
   desk.innerHTML = '';
+  desk.classList.add('playing');                    /* 게임 중에는 게임판 위에서 화면이 스크롤되지 않게 */
   errRun = true;
   errW = desk.clientWidth; errH = desk.clientHeight;
   for(var i=0;i<3;i++) spawnError();
@@ -2113,18 +2164,23 @@ function whBuild(){
   }
   moleGrid.appendChild(frag);
   /* 이벤트 위임 (구멍 9개에 리스너 9개 → 1개) */
-  moleGrid.addEventListener('click', function(e){
-    var m = e.target.closest('.mole');
-    if(m) whHit(m.parentNode);
-  });
+  /* 칸 전체가 터치 범위 + 손가락이 닿는 순간 바로 처리 */
+  var whLastPD = 0;
+  var pick = function(e){ var h = e.target && e.target.closest ? e.target.closest('.hole') : null; if(h) whHit(h); };
+  moleGrid.addEventListener('pointerdown', function(e){ whLastPD = now(); pick(e); });
+  moleGrid.addEventListener('click', function(e){ if(now() - whLastPD > 450) pick(e); });
 }
 function whSet(){
   if(whTimeEl)  whTimeEl.textContent  = whTime;
   if(whScoreEl) whScoreEl.textContent = whScore;
 }
 function whHit(hole){
-  if(!whRun || !hole.classList.contains('up')) return;
-  whScore++; whSet();
+  if(!whRun) return;
+  /* 막 들어간 직후(0.18초 이내)에 누른 것도 맞은 것으로 인정 */
+  var up = hole.classList.contains('up'), late = !up && hole._goneAt && now() - hole._goneAt < 180;
+  if(!up && !late) return;
+  hole._goneAt = 0; hole._until = 0;
+  whScore++; whSet(); buzz();
   hole.classList.remove('up');
   hole.classList.add('hit');
   hole._hitUntil = now() + 160;
@@ -2138,7 +2194,7 @@ function whPop(t){
     var h = down.splice(rnd(down.length), 1)[0];
     h.classList.remove('hit');
     var mel = h.querySelector('.mole'); if(mel) mel.className = allClear ? 'mole ic-jel' + (1 + rnd(3)) : 'mole ic-mon' + (1 + rnd(6));
-    h.classList.add('up');
+    h.classList.add('up'); h._goneAt = 0;
     h._until = t + (reduce ? 400 : 700 + Math.random()*350);
   }
 }
@@ -2147,13 +2203,14 @@ function whLoop(){
   var t = now(), h, i;
   for(i=0;i<holes.length;i++){
     h = holes[i];
-    if(h._until && t >= h._until && h.classList.contains('up')){ h.classList.remove('up'); h._until = 0; }
+    if(h._until && t >= h._until && h.classList.contains('up')){ h.classList.remove('up'); h._until = 0; h._goneAt = t; }
     if(h._hitUntil && t >= h._hitUntil){ h.classList.remove('hit'); h._hitUntil = 0; }
   }
   if(t >= whNextPop){ whPop(t); whNextPop = t + (reduce ? 400 : 520); }
 }
 function whStop(){
   whRun = false;
+  if(moleGrid) moleGrid.classList.remove('playing');
   clearInterval(whTickIv); clearInterval(whLoopIv);
 }
 function whReset(){
@@ -2186,6 +2243,7 @@ function whStart(){
   for(var i=0;i<holes.length;i++){ holes[i].classList.remove('up','hit'); holes[i]._until = holes[i]._hitUntil = 0; }
   whSet();
   whRun = true; whNextPop = 0;
+  if(moleGrid) moleGrid.classList.add('playing');
   whLoopIv = setInterval(whLoop, 90);
   whTickIv = setInterval(function(){
     whTime--; whSet();
@@ -2475,6 +2533,7 @@ function solve(){
   solved = true;
   qtext.textContent = ''; optsEl.textContent = ''; qcount.textContent = '';
   msg.textContent = '✔ 브리핑 완료 — 준비 완료!';
+  var _term = $('term'); if(_term) _term.hidden = true;   /* 다 풀면 파란 퀴즈 창은 치우고 도장만 남김 */
   grant('badge');                                   /* 퀴즈 올클리어(최종) → 대원 명찰 */
   setAllClear();
 
@@ -2645,7 +2704,7 @@ function quizGate(){
   ['goggles','headset','vest','helmet'].forEach(function(k){ if(owned[k]) have++; });
   var locked = have < 4, lock = $('quizLock'), term = $('term');
   if(lock){ lock.hidden = !locked; var c = lock.querySelector('.ql-count'); if(c) c.textContent = have + '/4'; }
-  if(term) term.hidden = locked;
+  if(term) term.hidden = locked || solved;          /* 다 푼 뒤에는 파란 퀴즈 창을 숨김 */
   if(locked){ var rev = $('reveal'); if(rev) rev.classList.remove('show'); }
 }
 /* =========================================================
