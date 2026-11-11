@@ -1069,6 +1069,33 @@ body{color:var(--ink);background-color:var(--desk);
 /* 두 번 터치(더블 탭) 확대 막기 — 스크롤과 터치는 그대로 */
 html,body,*{touch-action:manipulation}
 .hack-btn{touch-action:none}
+
+/* =========================================================
+   ★ 바로가기 — 큰 상자 버튼 대신 바탕화면 아이콘 모양 (흰 타일 + 아래 이름)
+   ========================================================= */
+.mobile-widgets .linkband{max-width:400px;width:100%;margin:0 auto;gap:4px;padding-top:16px;border-top:1px dashed #b4b9c6;justify-items:center}
+.mobile-widgets .bandbtn,.mobile-widgets .bandbtn:hover{background:none;border:0;box-shadow:none;color:var(--ink)}
+.mobile-widgets .bandbtn{width:auto;min-width:86px;padding:2px;gap:8px;font-size:12px}
+.mobile-widgets .bandbtn .linkico{width:58px;height:58px;flex:0 0 58px;background-color:#fff;background-size:34px auto;
+  border:2px solid;border-color:#fff #8c92a3 #8c92a3 #fff;box-shadow:0 0 0 1px #0b0e22,3px 3px 0 rgba(8,10,30,.2)}
+.mobile-widgets .bandbtn .linkico.ic-gacha{background-size:auto 40px}
+.mobile-widgets .bandbtn .lb{padding:2px 7px;line-height:1.35}
+.mobile-widgets .bandbtn:hover .lb,.mobile-widgets .bandbtn:focus-visible .lb{background:var(--blue);color:#fff}
+.mobile-widgets .bandbtn:focus-visible{outline:none}
+.mobile-widgets .bandbtn:active .linkico{transform:translate(2px,2px);box-shadow:0 0 0 1px #0b0e22}
+@media (max-width:340px){
+  .mobile-widgets .bandbtn{min-width:0;padding:2px 0;font-size:11px}
+  .mobile-widgets .bandbtn .linkico{width:50px;height:50px;flex-basis:50px;background-size:30px auto}
+  .mobile-widgets .bandbtn .linkico.ic-gacha{background-size:auto 34px}
+}
+
+/* 바로가기: 상자 없이 아이콘 + 아래 이름 */
+.mobile-widgets .bandbtn{min-width:0;padding:6px 10px}
+.mobile-widgets .bandbtn .linkico,.mobile-widgets .bandbtn .linkico.ic-gacha{width:48px;height:48px;flex:0 0 48px;background-color:transparent;background-size:contain;border:0;box-shadow:none;
+  filter:drop-shadow(2px 2px 0 rgba(8,10,30,.22))}
+.mobile-widgets .bandbtn:hover .linkico{transform:translateY(-2px)}
+.mobile-widgets .bandbtn:active .linkico{transform:translate(1px,2px);box-shadow:none;filter:none}
+@media (max-width:340px){.mobile-widgets .bandbtn .linkico,.mobile-widgets .bandbtn .linkico.ic-gacha{width:42px;height:42px;flex-basis:42px;background-size:contain}}
 </style>
 </head>
 <body>
@@ -1135,7 +1162,6 @@ html,body,*{touch-action:manipulation}
         <div class="panel-bd notice">
           <p class="lead">픽셀린으로부터 <b>흰디</b>를 지켰습니다.</p>
           <p class="p-desc">닥터 H와 흰디는 다시 게임 아카이브를 관리하고 수호하는 일상으로 돌아갔습니다.</p>
-          <a class="bandbtn is-primary home-cta" href="#stage-zap">▶ 젤뽀랑 놀러 가기</a>
         </div>
       </section>
 
@@ -1143,8 +1169,7 @@ html,body,*{touch-action:manipulation}
         <div class="panel-hd"><span class="k">!</span> 미션 브리핑 · NOTICE.txt</div>
         <div class="panel-bd notice">
           <p class="lead">이 아카이브는 <b>픽셀린</b>이 점령했다.</p>
-          <p class="p-desc">아래 버튼을 누르면 다음 스테이지로 바로 이동해요. 스테이지를 깨고, <span class="blip">비하인드 스토리</span>를 읽은 뒤 <span class="blip">파이널 퀴즈</span>를 풀면 숨겨진 픽셀린 일러스트가 해금됩니다.</p>
-          <a class="bandbtn is-primary home-cta" id="homeCta" href="#stage-gacha">▶ 시작하기</a>
+          <p class="p-desc">위 메뉴에서 스테이지를 골라 차례대로 깨 주세요. 스테이지를 모두 깨고, <span class="blip">비하인드 스토리</span>를 읽은 뒤 <span class="blip">파이널 퀴즈</span>를 풀면 숨겨진 픽셀린 일러스트가 해금됩니다.</p>
         </div>
       </section>
 
@@ -1154,9 +1179,9 @@ html,body,*{touch-action:manipulation}
         <div class="panel-bd">
           <div class="mw-stack">
             <div class="linkband">
-              <a class="bandbtn js-home" target="_blank" rel="noopener"><span class="linkico ic-home"></span> 홈페이지 <span class="arw">GO▶</span></a>
-              <a class="bandbtn js-insta" target="_blank" rel="noopener"><span class="linkico ic-insta"></span> 인스타그램 <span class="arw">GO▶</span></a>
-              <button class="bandbtn js-qrdraw" type="button"><span class="linkico ic-gacha"></span> 랜덤 뽑기 <span class="arw">GO▶</span></button>
+              <a class="bandbtn js-home" target="_blank" rel="noopener"><span class="linkico ic-home"></span><span class="lb">홈페이지</span></a>
+              <a class="bandbtn js-insta" target="_blank" rel="noopener"><span class="linkico ic-insta"></span><span class="lb">인스타그램</span></a>
+              <button class="bandbtn js-qrdraw" type="button"><span class="linkico ic-gacha"></span><span class="lb">랜덤 뽑기</span></button>
             </div>
             <div class="mw-ava">
               <div class="ava-stage"><div class="avatar">
