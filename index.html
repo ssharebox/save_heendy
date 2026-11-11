@@ -805,6 +805,157 @@ body{color:var(--ink);background-color:var(--desk);
 .se-btn.se-sub{font-size:13px;padding:10px;color:var(--sub)}
 .se-btn.se-sub:hover{background:var(--blue);color:#fff}
 .stage-end.inline .se-x{display:none}
+
+/* =========================================================
+   ★ STAGE 04 클리어 연출 — 화면 지지직 → "포탈 생성 완료" → 비하인드로 자동 이동
+   ========================================================= */
+.desktop.glitching{animation:glShake .14s steps(2) infinite;filter:contrast(1.25) saturate(1.6)}
+@keyframes glShake{0%{transform:translate(0,0)}25%{transform:translate(-7px,2px) skewX(-2deg)}50%{transform:translate(6px,-3px) skewX(1.5deg)}75%{transform:translate(-3px,1px)}100%{transform:translate(4px,0) skewX(-1deg)}}
+.glitch-ov{position:fixed;inset:0;z-index:9600;display:flex;align-items:center;justify-content:center;
+  background:rgba(5,7,26,.3);overflow:hidden;transition:background .2s}
+.glitch-ov.done{background:#05071a}
+.glitch-ov.out{opacity:0;transition:opacity .3s}
+.gl-noise{position:absolute;inset:-8px 0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.13) 0 2px,transparent 2px 5px);
+  animation:glNoise .12s steps(3) infinite}
+.gl-noise::before,.gl-noise::after{content:'';position:absolute;left:0;right:0;height:11%;animation:glBar .4s steps(5) infinite}
+.gl-noise::before{background:rgba(75,104,255,.5);top:18%}
+.gl-noise::after{background:rgba(255,42,109,.4);top:62%;height:6%;animation-duration:.31s;animation-direction:reverse}
+@keyframes glNoise{0%{transform:translateY(0)}50%{transform:translateY(3px)}100%{transform:translateY(-2px)}}
+@keyframes glBar{0%{top:8%}20%{top:71%}40%{top:33%}60%{top:88%}80%{top:49%}100%{top:15%}}
+.glitch-ov.done .gl-noise{opacity:.3}
+.glitch-ov.done .gl-noise::before,.glitch-ov.done .gl-noise::after{display:none}
+.gl-msg{position:relative;text-align:center;padding:0 16px;visibility:hidden}
+.glitch-ov.done .gl-msg{visibility:visible;animation:pop .3s ease-out}
+.gl-en{font-size:10px;letter-spacing:2px;color:#8ea4ff;margin-bottom:14px}
+.gl-kr{font-family:var(--f-kr);font-size:32px;line-height:1.3;color:#fff;text-shadow:-3px 0 #ff2a6d,3px 0 #4b68ff;animation:glText .45s steps(2) 2}
+@keyframes glText{0%{transform:translateX(-4px) skewX(-6deg)}50%{transform:translateX(5px) skewX(5deg)}100%{transform:none}}
+.gl-sub{font-family:var(--f-sm);font-size:13px;color:#c9cfee;margin-top:16px}
+@media (max-width:420px){.gl-kr{font-size:27px}}
+
+/* 소개: 픽셀린도 흰디와 같은 틀 (이미지 칸 크기·테두리 동일) */
+.char-img{width:100%;max-width:220px;margin:0 auto;aspect-ratio:300/393;background-color:#fff;
+  background-size:contain;background-repeat:no-repeat;background-position:center;image-rendering:pixelated;
+  border:2px solid var(--black);border-top-color:var(--grayd);border-left-color:var(--grayd)}
+
+/* =========================================================
+   ★ 도트 컬렉션 카드 — 뽑은 일러스트를 카드로 꾸며서 보여주고, 크게 보기 · 이미지 저장
+   ========================================================= */
+.se-cardwrap{margin:0 0 14px}
+.se-card{display:block;margin:2px auto 0;padding:0;border:0;background:none;cursor:zoom-in;max-width:200px;width:100%;
+  transform:rotate(-1.4deg);box-shadow:4px 5px 0 rgba(8,10,30,.3);animation:pop .35s ease-out}
+.se-card img,.clb-img{display:block;width:100%;height:auto;image-rendering:auto;-webkit-touch-callout:default}
+.se-cardbtns{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.chip{font-family:var(--f-sm);font-size:12px;color:var(--ink);background:var(--gray);padding:7px 13px;cursor:pointer;
+  border:2px solid var(--black);border-top-color:#fff;border-left-color:#fff;border-right-color:var(--grayd);border-bottom-color:var(--grayd)}
+.chip:hover{background:var(--blue);color:#fff}
+@media (max-height:700px){.se-card{max-width:150px}.se-cardwrap{margin-bottom:10px}}
+.gc-slot.on{cursor:zoom-in}
+.gc-hint{text-align:center;font-family:var(--f-sm);font-size:11px;color:var(--sub);margin-top:3px}
+.card-lb{position:fixed;inset:0;z-index:9700;background:rgba(10,13,38,.88);display:flex;align-items:center;justify-content:center;
+  padding:12px;animation:seIn .16s steps(2)}
+.clb-win{width:auto;max-width:100%}
+.clb-bd{padding:12px;text-align:center}
+.clb-img{width:auto;max-width:100%;max-height:calc(100vh - 200px);max-height:calc(100dvh - 200px);margin:0 auto;animation:pop .3s ease-out}
+.clb-hint{font-family:var(--f-sm);font-size:11px;color:var(--sub);margin-top:9px}
+.clb-bd .pw-actions{margin-top:10px}
+
+/* =========================================================
+   ★ 홈 로고 연출 — PRESS START만 깜빡 + 7초마다 해킹당한 듯 지지직
+   ========================================================= */
+.screen{overflow:hidden}
+.boot-logo{position:relative;animation:blShake 7s steps(1) infinite}
+/* PRESS START 자리만 검정으로 덮었다 뗐다 (로고는 한 장짜리 이미지라 이 방식) */
+.bl-press{position:absolute;left:16%;right:19%;top:88.3%;bottom:0;background:#000;opacity:0;animation:blPress 1.1s steps(1) infinite}
+@keyframes blPress{0%{opacity:0}55%{opacity:1}100%{opacity:1}}
+/* 가로로 잘려서 어긋나는 조각 */
+.bl-slice{position:absolute;inset:0;background-color:#000;background-size:contain;background-repeat:no-repeat;background-position:center;
+  image-rendering:pixelated;opacity:0;pointer-events:none}
+.bl-s1{filter:hue-rotate(-70deg) saturate(3);animation:blSlice1 7s steps(1) infinite}
+.bl-s2{filter:hue-rotate(120deg) saturate(2.5);animation:blSlice2 7s steps(1) infinite}
+@keyframes blSlice1{
+  0%,37%{opacity:0}
+  38%{opacity:1;transform:translateX(-12px);clip-path:inset(30% 0 52% 0)}
+  39.5%{opacity:1;transform:translateX(9px);clip-path:inset(62% 0 20% 0)}
+  41%,83%{opacity:0}
+  84%{opacity:1;transform:translateX(-18px);clip-path:inset(16% 0 64% 0)}
+  85.5%{opacity:1;transform:translateX(14px);clip-path:inset(58% 0 24% 0)}
+  87%{opacity:1;transform:translateX(-9px);clip-path:inset(6% 0 82% 0)}
+  89%{opacity:1;transform:translateX(20px);clip-path:inset(70% 0 12% 0)}
+  91%{opacity:1;transform:translateX(-6px);clip-path:inset(24% 0 60% 0)}
+  92.5%,100%{opacity:0}}
+@keyframes blSlice2{
+  0%,37.5%{opacity:0}
+  38.5%{opacity:1;transform:translateX(10px);clip-path:inset(8% 0 80% 0)}
+  40.5%,83.5%{opacity:0}
+  84.5%{opacity:1;transform:translateX(16px);clip-path:inset(40% 0 44% 0)}
+  86.5%{opacity:1;transform:translateX(-13px);clip-path:inset(78% 0 6% 0)}
+  88.5%{opacity:1;transform:translateX(8px);clip-path:inset(2% 0 88% 0)}
+  90.5%{opacity:1;transform:translateX(-16px);clip-path:inset(48% 0 34% 0)}
+  92.5%,100%{opacity:0}}
+@keyframes blShake{
+  0%,37%{transform:none}38%{transform:translate(-3px,1px)}39.5%{transform:translate(3px,-1px)}41%,83%{transform:none}
+  84%{transform:translate(-5px,2px) skewX(-2deg)}86%{transform:translate(4px,-2px)}88%{transform:translate(-2px,1px) skewX(1.5deg)}90%{transform:translate(3px,0)}92.5%,100%{transform:none}}
+/* 해킹 문구 띠 */
+.bl-hack{position:absolute;left:-6%;right:-6%;top:34%;padding:11px 6px 9px;text-align:center;background:#ff2a6d;color:#fff;
+  border-top:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-2.5deg);opacity:0;pointer-events:none;
+  animation:blHack 7s steps(1) infinite}
+.bl-hack b{display:block;font-size:11px;font-weight:normal;letter-spacing:1px;line-height:1.6}
+.bl-hack i{display:block;font-style:normal;font-family:var(--f-kr);font-size:14px;line-height:1.5;margin-top:2px}
+@keyframes blHack{0%,84.5%{opacity:0}85.5%{opacity:1}88%{opacity:0}88.8%{opacity:1}92.5%,100%{opacity:0}}
+@media (max-width:420px){.bl-hack b{font-size:9px}.bl-hack i{font-size:13px}}
+
+/* =========================================================
+   ★ 접속 0.5초 뒤 해킹 인트로 — 초록 글자 비 + 픽셀린 얼굴, 버튼 하나만 누를 수 있음
+   ========================================================= */
+.hackintro{position:fixed;inset:0;z-index:9800;background:#000;overflow-y:auto;animation:hiIn .32s steps(1)}
+@keyframes hiIn{0%{opacity:0}20%{opacity:1}40%{opacity:.2}60%{opacity:1}80%{opacity:.5}100%{opacity:1}}
+.hackintro.out{opacity:0;transition:opacity .25s;pointer-events:none}
+.hi-rain{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hi-inner{position:relative;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:26px 16px;text-align:center}
+.hi-box{display:flex;align-items:center;gap:20px;background:#000;border:1px solid #2c2c2c;padding:24px 34px;box-shadow:0 0 0 6px #000}
+.hi-face{width:128px;height:130px;flex:0 0 128px;background-color:#fff;background-size:contain;background-repeat:no-repeat;background-position:center;
+  image-rendering:pixelated;border:2px solid #fff}
+.hi-crew{text-align:left;color:#fff;font-size:20px;line-height:1.6}
+.hi-crew small{display:block;font-size:8px;letter-spacing:3px;color:#cfcfcf;margin-top:8px}
+.hi-text{margin-top:22px;background:rgba(0,0,0,.74);padding:14px 18px 16px;max-width:560px}
+.hi-title{font-family:var(--f-kr);font-size:30px;font-weight:bold;line-height:1.35;color:#19e6ff;text-shadow:0 0 14px rgba(25,230,255,.55)}
+.hi-red{font-family:var(--f-kr);font-size:13px;line-height:1.75;color:#ff4040;margin-top:14px;text-shadow:0 0 8px rgba(255,64,64,.45)}
+.hi-list{list-style:none;font-family:var(--f-kr);font-size:14px;line-height:1.9;color:#bfefff;margin-top:12px}
+.hi-go{margin-top:22px;font-family:var(--f-kr);font-size:18px;color:#000;background:#19e6ff;cursor:pointer;padding:15px 28px;
+  border:3px solid #fff;box-shadow:0 0 20px rgba(25,230,255,.7);animation:hiPulse 1s steps(1) infinite}
+.hi-go:hover{background:#fff}.hi-go:focus{outline:none}
+@keyframes hiPulse{0%{box-shadow:0 0 20px rgba(25,230,255,.7)}50%{box-shadow:0 0 0 rgba(25,230,255,0)}}
+@media (max-width:480px){
+  .hi-box{padding:16px 18px;gap:14px}.hi-face{width:92px;height:94px;flex-basis:92px}.hi-crew{font-size:14px}.hi-crew small{font-size:7px;letter-spacing:2px}
+  .hi-title{font-size:23px}.hi-list{font-size:13px}.hi-go{font-size:17px;padding:14px 22px}
+}
+
+/* 전부 클리어한 뒤: 홈 로고의 해킹 연출 끔 (PRESS START 깜빡임은 유지) */
+.all-clear .boot-logo{animation:none}
+.all-clear .bl-slice,.all-clear .bl-hack{display:none}
+
+/* 장비 게이지가 채워지지 않던 문제 (막대가 inline이라 너비가 안 먹음) */
+.gearbar .fill{display:block}
+
+/* =========================================================
+   ★ 올클리어 뒤 평화 모드 — 오류창→감사 편지 / 몬스터→젤뽀랑 놀기 / 포탈 해킹→게임 아카이브로 놀러 가기
+   ========================================================= */
+.ic-jel1{background-image:url(data:image/png;base64,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)}
+.ic-jel2{background-image:url(data:image/png;base64,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)}
+.ic-jel3{background-image:url(data:image/png;base64,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)}
+.all-clear .hole{background:#e8e3ff}
+.all-clear .hole .mole{image-rendering:auto;left:9%;right:9%;height:88%}
+.all-clear .hole.hit .mole{transform:translateY(-7%) scale(1.07);filter:none}
+.all-clear .hole.hit::after{content:'♥';position:absolute;top:4%;right:9%;font-size:20px;color:#ff4f9a;animation:pop .2s ease-out}
+.all-clear .deskarea{background-color:#dfe6ff;background-image:radial-gradient(rgba(18,42,184,.13) 1px,transparent 1.2px)}
+.all-clear .errwin .ei{color:#ff4f9a}
+.all-clear .hack-btn{background:var(--blue);border-top-color:#6f86ff;border-left-color:#6f86ff;border-right-color:#0a1770;border-bottom-color:#0a1770;box-shadow:0 4px 0 #0a1770}
+.all-clear .hack-btn.holding{background:#0c1c8a;box-shadow:0 1px 0 #0a1770;border-top-color:#0a1770;border-left-color:#0a1770;border-right-color:#6f86ff;border-bottom-color:#6f86ff}
+.glitch-ov.peace{background:var(--blue)}
+.glitch-ov.peace .gl-kr{text-shadow:3px 3px 0 rgba(0,0,0,.35);animation:none}
+.glitch-ov.peace .gl-en{color:#d9ddff}
 </style>
 </head>
 <body>
@@ -852,12 +1003,20 @@ body{color:var(--ink);background-color:var(--desk);
     <!-- ============ 홈 ============ -->
     <section class="view" data-view="home">
       <div class="screen">
-        <a href="#about" class="boot-logo ic-logo" aria-label="SAVE Heendy · PRESS START"></a>
+        <a href="#about" class="boot-logo ic-logo" aria-label="SAVE Heendy · PRESS START">
+          <span class="bl-press" aria-hidden="true"></span>
+          <span class="bl-slice bl-s1 ic-logo" aria-hidden="true"></span>
+          <span class="bl-slice bl-s2 ic-logo" aria-hidden="true"></span>
+          <span class="bl-hack" aria-hidden="true"><b class="en">!! HACKED BY PIXELIN !!</b><i>이 사이트는 내가 접수했다 메롱~♥</i></span>
+        </a>
       </div>
 
-      <div class="ticker"><div class="track">
+      <div class="ticker"><div class="track" id="tickHack">
         ★ 이 몸 픽셀린이 이 사이트를 점령했다! &nbsp;★ <u>메롱메롱~♥</u> 아무것도 못 하겠지? &nbsp;★ 도트는 전부 내 거야, 손대지 마 &nbsp;★ 닥터 H도 날 못 막아 ㅎ &nbsp;★ 여긴 이제 도트 세계다, 환영해줄게~♥ &nbsp;★&nbsp;
         ★ 이 몸 픽셀린이 이 사이트를 점령했다! &nbsp;★ <u>메롱메롱~♥</u> 아무것도 못 하겠지? &nbsp;★ 도트는 전부 내 거야, 손대지 마 &nbsp;★ 닥터 H도 날 못 막아 ㅎ &nbsp;★ 여긴 이제 도트 세계다, 환영해줄게~♥ &nbsp;★&nbsp;
+      </div><div class="track" id="tickClear" hidden>
+        ★ 게임 아카이브가 원래대로 돌아왔습니다 &nbsp;★ 흰디는 무사합니다 &nbsp;★ 닥터 H와 흰디가 아카이브를 지키고 있어요 &nbsp;★&nbsp;
+        ★ 게임 아카이브가 원래대로 돌아왔습니다 &nbsp;★ 흰디는 무사합니다 &nbsp;★ 닥터 H와 흰디가 아카이브를 지키고 있어요 &nbsp;★&nbsp;
       </div></div>
 
       <!-- 모바일/좁은 화면 전용 위젯 -->
@@ -887,7 +1046,16 @@ body{color:var(--ink);background-color:var(--desk);
         </div>
       </section>
 
-      <section class="panel">
+      <!-- 전부 클리어한 뒤에만 보이는 엔딩 (미션 브리핑 자리를 대신함) -->
+      <section class="panel" id="endingPanel" hidden>
+        <div class="panel-hd"><span class="k">★</span> ALL CLEAR</div>
+        <div class="panel-bd notice">
+          <p class="lead">픽셀린으로부터 <b>흰디</b>를 지켰습니다.</p>
+          <p class="p-desc">닥터 H와 흰디는 다시 게임 아카이브를 관리하고 수호하는 일상으로 돌아갔습니다.</p>
+        </div>
+      </section>
+
+      <section class="panel" id="briefPanel">
         <div class="panel-hd"><span class="k">!</span> 미션 브리핑 · NOTICE.txt</div>
         <div class="panel-bd notice">
           <p class="lead">이 아카이브는 <b>픽셀린</b>이 점령했다.</p>
@@ -916,21 +1084,16 @@ body{color:var(--ink);background-color:var(--desk);
         </div>
       </section>
       <section class="panel">
-        <div class="panel-hd"><span class="k">P</span> ABOUT PIXELIN · 캐릭터 시트</div>
+        <div class="panel-hd"><span class="k">P</span> ABOUT PIXELIN · 픽셀린</div>
         <div class="panel-bd">
           <div class="stat-grid">
-            <div class="charimg ic-portrait" role="img" aria-label="픽셀린 초상화"></div>
+            <div class="char-img ic-portrait" role="img" aria-label="픽셀린"></div>
             <div>
-              <table class="rows">
-                <tr><td class="k">이름</td><td class="v"><b>픽셀린</b> (PIXELIN)</td></tr>
-                <tr><td class="k">속성</td><td class="v">⚡ 전기 (ELECTRIC)</td></tr>
-                <tr><td class="k">소속</td><td class="v">도트 사랑단</td></tr>
-                <tr><td class="k">역할</td><td class="v">도트 세계의 침략자</td></tr>
-                <tr><td class="k">무기</td><td class="v">픽셀 채찍 · 오류 윈도우 · 도트 포탈</td></tr>
-                <tr><td class="k">성격</td><td class="v"><b>짓궂음 · 장난기 많음 · 자신만만</b></td></tr>
-                <tr><td class="k">특징</td><td class="v">도트를 광적으로 사랑 · 관심받고 싶어 자꾸 사고를 침</td></tr>
-              </table>
-              <div class="motto">“ <b>메롱~♥</b> ”</div>
+              <div class="heendy-name"><b>Pixelin</b><small>픽셀린</small></div>
+              <div class="heendy-tag"><b>도트를 광적으로 사랑하는 ‘도트 세계의 침략자’</b></div>
+              <div class="heendy-hash"># 짓궂음 # 장난기 # 자신만만</div>
+              <p class="heendy-desc">도트 사랑단 소속의 전기 속성 캐릭터 ‘픽셀린’은 픽셀 채찍과 오류 윈도우, 도트 포탈로 도트 세계를 휘젓고 다닙니다. 관심받고 싶은 마음에 자꾸 사고를 치지만 본인은 언제나 자신만만해요. 한번 눈에 띄면 자꾸 신경 쓰이는 캐릭터입니다.</p>
+              <div class="heendy-sns">픽셀린의 한마디 <b style="color:var(--blue)">“메롱~♥”</b></div>
             </div>
           </div>
           <div class="pagenav"><a href="#home">◀ 홈으로</a><a href="#stage-gacha">STAGE 01 ▶</a></div>
@@ -957,12 +1120,12 @@ body{color:var(--ink);background-color:var(--desk);
     <!-- ============ STAGE 02 오류 ============ -->
     <section class="view" data-view="stage-error" hidden>
       <section class="panel">
-        <div class="panel-hd"><span class="k">02</span> STAGE 02 · 오류 윈도우 (타임어택)</div>
+        <div class="panel-hd" id="hdError"><span class="k">02</span> STAGE 02 · 오류 윈도우 (타임어택)</div>
         <div class="panel-bd">
-          <p class="p-desc">픽셀린의 주특기! <b>20초</b> 동안 에러창을 최대한 많이 꺼보세요. (× 또는 확인) <span class="blip">25개 이상</span>이면 성공!</p>
+          <p class="p-desc" id="descError">픽셀린의 주특기! <b>20초</b> 동안 에러창을 최대한 많이 꺼보세요. (× 또는 확인) <span class="blip">25개 이상</span>이면 성공!</p>
           <div class="err-hud">
             <span>남은 시간 <b id="errTime">20</b>s</span>
-            <span>지운 창 <b id="errScore">0</b> / 목표 25</span>
+            <span><span id="errLab">지운 창</span> <b id="errScore">0</b><span id="errGoal"> / 목표 25</span></span>
           </div>
           <div class="deskarea" id="desk-error"></div>
           <div class="pagenav"><a href="#home">◀ 목록</a><a href="#stage-zap">STAGE 03 ▶</a></div>
@@ -973,12 +1136,12 @@ body{color:var(--ink);background-color:var(--desk);
     <!-- ============ STAGE 03 두더지 ============ -->
     <section class="view" data-view="stage-zap" hidden>
       <section class="panel">
-        <div class="panel-hd"><span class="k">03</span> STAGE 03 · 몬스터 잡기</div>
+        <div class="panel-hd" id="hdZap"><span class="k">03</span> STAGE 03 · 몬스터 잡기</div>
         <div class="panel-bd">
-          <p class="p-desc">픽셀린의 몬스터가 몰려왔어요! <b>20초</b> 안에 <span class="blip">25마리</span>를 막아주세요! (튀어나온 몬스터를 클릭·터치)</p>
+          <p class="p-desc" id="descZap">픽셀린의 몬스터가 몰려왔어요! <b>20초</b> 안에 <span class="blip">25마리</span>를 막아주세요! (튀어나온 몬스터를 클릭·터치)</p>
           <div class="err-hud">
             <span>남은 시간 <b id="whTime">20</b>s</span>
-            <span>잡은 몬스터 <b id="whScore">0</b> / 목표 25</span>
+            <span><span id="whLab">잡은 몬스터</span> <b id="whScore">0</b><span id="whGoal"> / 목표 25</span></span>
           </div>
           <div class="mole-area" id="moleArea"><div class="mole-grid" id="moleGrid"></div></div>
           <div class="pagenav"><a href="#home">◀ 목록</a><a href="#stage-portal">STAGE 04 ▶</a></div>
@@ -989,17 +1152,17 @@ body{color:var(--ink);background-color:var(--desk);
     <!-- ============ STAGE 04 포탈 ============ -->
     <section class="view" data-view="stage-portal" hidden>
       <section class="panel">
-        <div class="panel-hd"><span class="k">04</span> STAGE 04 · 도트 포탈 해킹</div>
+        <div class="panel-hd" id="hdPortal"><span class="k">04</span> STAGE 04 · 도트 포탈 해킹</div>
         <div class="panel-bd">
-          <p class="p-desc">도트 세계로 통하는 포탈을 해킹해요. 가운데 <b>빨간 버튼을 꾹 누르고</b> 있으면 침투율이 올라가고, 손을 떼면 다시 내려가요. <span class="blip">100%</span> 달성 시 해킹 완료!</p>
+          <p class="p-desc" id="descPortal">도트 세계로 통하는 포탈을 해킹해요. 가운데 <b>빨간 버튼을 꾹 누르고</b> 있으면 침투율이 올라가고, 손을 떼면 다시 내려가요. <span class="blip">100%</span>가 되면 포탈이 열리고 비하인드 스토리로 넘어가요!</p>
           <div class="hack-term" id="hackTerm">
-            <div class="ht-bar"><span>root@DOTWORLD:~/portal.hack</span><span class="ht-dots">▄ ▄ ▄</span></div>
+            <div class="ht-bar"><span id="hackBarTxt">root@DOTWORLD:~/portal.hack</span><span class="ht-dots">▄ ▄ ▄</span></div>
             <div class="ht-log" id="hackLog"></div>
             <div class="ht-meter"><i class="ht-fill" id="hackFill"></i><span class="ht-pct en" id="hackPct">0%</span></div>
             <button class="hack-btn en" id="hackBtn" type="button">HOLD<br>TO HACK</button>
           </div>
           <div id="portalEnd"></div>
-          <div class="pagenav"><a href="#home">◀ 목록</a><a href="#lore">비하인드 ▶</a></div>
+          <div class="pagenav"><a href="#home">◀ 목록</a><a href="#lore" id="portalNext">비하인드 ▶</a></div>
         </div>
       </section>
     </section>
@@ -1071,7 +1234,7 @@ body{color:var(--ink);background-color:var(--desk);
                     </div>
                   </div>
                   <div class="se-note">구조 준비 끝! 이제 진짜로 픽셀린을 만나러 갈 시간이에요.<br>쉐어박스 소식은 아래에서 만나보세요.</div>
-                  <div class="se-tip">이 <b>클리어 완료 화면</b>을 요원에게 보여주면 <b class="blip">비밀번호</b>를 받아,<br><b>랜덤 뽑기</b>에 참여할 수 있어요!</div>
+                  <div class="se-tip">이 <b>클리어 완료 화면</b>을 요원에게<br>보여주면 <b class="blip">비밀번호</b>를 받아<br><b>랜덤 뽑기</b>에 참여하세요!</div>
                   <div class="se-btns">
                     <a class="se-btn js-insta" target="_blank" rel="noopener"><span class="linkico ic-insta"></span> 쉐어박스 인스타그램 <span class="arw">▶</span></a>
                     <a class="se-btn js-home" target="_blank" rel="noopener"><span class="linkico ic-home"></span> 쉐어박스 홈페이지 <span class="arw">▶</span></a>
@@ -1301,6 +1464,15 @@ var STAGE_NEXT = {
   'stage-portal': {href:'#lore',         lab:'비하인드 스토리'}
 };
 
+/* 올클리어 뒤 평화 모드 */
+var allClear = false;
+var PEACE_NEXT = {
+  'stage-gacha' : {href:'#stage-error',  lab:'감사 편지 받기'},
+  'stage-error' : {href:'#stage-zap',    lab:'젤뽀랑 놀기'},
+  'stage-zap'   : {href:'#stage-portal', lab:'아카이브 놀러 가기'},
+  'stage-portal': {href:'#home',         lab:'홈으로'}
+};
+
 function clearStageEnd(host){
   if(!host) return;
   var old = host.querySelector(':scope > .stage-end');
@@ -1356,7 +1528,7 @@ function buildStageEnd(o){
   clearStageEnd(host);
 
   var ok = o.ok !== false;
-  var nx = STAGE_NEXT[o.stage] || {href:'#home', lab:'홈으로'};
+  var nx = (allClear ? PEACE_NEXT : STAGE_NEXT)[o.stage] || {href:'#home', lab:'홈으로'};
   var g  = o.gear ? GEAR_BY_KEY[o.gear] : null;
   var _iconMap = {goggles:'it-goggles', headset:'it-headset', vest:'it-vest', helmet:'it-helmet', badge:'it-badge'}, _icls = _iconMap[o.gear];
 
@@ -1408,10 +1580,10 @@ function buildStageEnd(o){
    3. STAGE 01 · 도트 뽑기볼
    ========================================================= */
 var gachaPool = [
-  {cap:'멋지게 서있는 픽셀린',      hand:'★ 레어! 픽셀린 ★',       img:'gr-standing'},
-  {cap:'전기 스파크를 두른 픽셀린', hand:'⚡ 스파크 픽셀린 ⚡',      img:'gr-spark'},
-  {cap:'낮잠 자는 픽셀린',         hand:'★ 곰인형과 픽셀린 ★',     img:'gr-sleep'},
-  {cap:'네온 골목의 픽셀린',       hand:'★ 스페셜: 사이버 골목 ★',  img:'gr-alley'}
+  {no:1, tag:'RARE',    cap:'멋지게 서있는 픽셀린',      hand:'★ 레어! 픽셀린 ★',       img:'gr-standing'},
+  {no:2, tag:'SPARK',   cap:'전기 스파크를 두른 픽셀린', hand:'⚡ 스파크 픽셀린 ⚡',      img:'gr-spark'},
+  {no:3, tag:'NAP',     cap:'낮잠 자는 픽셀린',         hand:'★ 곰인형과 픽셀린 ★',     img:'gr-sleep'},
+  {no:4, tag:'SPECIAL', cap:'네온 골목의 픽셀린',       hand:'★ 스페셜: 사이버 골목 ★',  img:'gr-alley'}
 ];
 var gachaDud = {cap:'꽝! 메롱~♥ 다시 뽑아봐', hand:'인형만 잔뜩… 메롱~♥', img:'gr-dud', dud:true};
 var GACHA_DUD_RATE = 0.55;   /* 꽝 확률 (0~1, 조정 지점) */
@@ -1419,6 +1591,164 @@ var SPIN = ['◜','◝','◞','◟'];
 var gachaBusy = false, gachaTick = null, gachaTimer = null;
 var gachaSeen = Object.create(null), gachaUniq = 0;
 var outGacha = $('out-gacha'), gachaEndHost = $('gachaEnd');
+
+/* ---------------------------------------------------------
+   도트 컬렉션 카드 (캔버스로 그려서 이미지로 만듦 → 크게 보기 · 저장)
+   --------------------------------------------------------- */
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function todayStr(){ var d = new Date(); return d.getFullYear() + '.' + pad2(d.getMonth()+1) + '.' + pad2(d.getDate()); }
+function poolByNo(no){ for(var i=0;i<gachaPool.length;i++) if(gachaPool[i].no === +no) return gachaPool[i]; return null; }
+function bgUrlOf(cls){                              /* CSS에 심어둔 일러스트 주소 꺼내기 */
+  var t = document.createElement('i'); t.className = cls; t.style.display = 'none';
+  document.body.appendChild(t);
+  var m = /url\((["']?)(.*?)\1\)/.exec(getComputedStyle(t).backgroundImage || '');
+  t.remove();
+  return m ? m[2] : '';
+}
+function loadImg(url){
+  return new Promise(function(ok, no){
+    if(!url){ no(); return; }
+    var im = new Image(); im.onload = function(){ ok(im); }; im.onerror = no; im.src = url;
+  });
+}
+function fontsReady(){
+  if(!document.fonts || !document.fonts.load) return Promise.resolve();
+  return Promise.all([document.fonts.load('32px Galmuri11', '픽셀린'), document.fonts.load('16px "Press Start 2P"', 'DOT')])
+    .then(function(){}, function(){});
+}
+var cardCache = Object.create(null);
+function makeCard(it){
+  if(cardCache[it.no]) return Promise.resolve(cardCache[it.no]);
+  return Promise.all([loadImg(bgUrlOf('ic-' + it.img)), fontsReady()]).then(function(res){
+    var url = drawCard(it, res[0]);
+    cardCache[it.no] = url;
+    return url;
+  });
+}
+function drawCard(it, img){
+  var W = 900, PADX = 72, IW = W - PADX*2, IH = Math.round(IW * img.height / img.width);
+  var IY = 148, PY = IY + IH + 26, PH = 262, H = PY + PH + 122;
+  var KR = '"Galmuri11","Galmuri9",monospace', EN = '"Press Start 2P","Galmuri11",monospace';
+  var BLUE = '#122ab8', INK = '#1c2030', SUB = '#565c6e';
+  var c = document.createElement('canvas'); c.width = W; c.height = H;
+  var x = c.getContext('2d'), i, j;
+  function bevel(bx, by, bw, bh, t, lt, dk){        /* 튀어나온/눌린 테두리 */
+    x.fillStyle = lt; x.fillRect(bx, by, bw, t); x.fillRect(bx, by, t, bh);
+    x.fillStyle = dk; x.fillRect(bx, by + bh - t, bw, t); x.fillRect(bx + bw - t, by, t, bh);
+  }
+  /* 바탕 */
+  x.fillStyle = '#262d55'; x.fillRect(0, 0, W, H);
+  x.fillStyle = 'rgba(255,255,255,.08)';
+  for(i = 6; i < W; i += 14) for(j = 6; j < H; j += 14) x.fillRect(i, j, 3, 3);
+  /* 창 */
+  var WX = 34, WY = 34, WW = W - 68, WH = H - 68;
+  x.fillStyle = 'rgba(8,10,30,.5)'; x.fillRect(WX + 14, WY + 16, WW, WH);
+  x.fillStyle = '#0b0e22'; x.fillRect(WX - 2, WY - 2, WW + 4, WH + 4);
+  x.fillStyle = '#d6d9e0'; x.fillRect(WX, WY, WW, WH);
+  bevel(WX, WY, WW, WH, 5, '#ffffff', '#3a4054');
+  /* 제목 표시줄 */
+  var g = x.createLinearGradient(WX, 0, WX + WW, 0);
+  g.addColorStop(0, '#0c1c8a'); g.addColorStop(.45, BLUE); g.addColorStop(1, '#4b68ff');
+  x.fillStyle = g; x.fillRect(WX + 12, WY + 12, WW - 24, 64);
+  x.fillStyle = '#fff'; x.textBaseline = 'middle'; x.textAlign = 'left';
+  x.font = '28px ' + KR; x.fillText('PIXELIN.EXE - DOT COLLECTION', WX + 30, WY + 45);
+  for(i = 0; i < 3; i++){
+    var bx = WX + WW - 58 - i*46;
+    x.fillStyle = '#d6d9e0'; x.fillRect(bx, WY + 26, 38, 36); bevel(bx, WY + 26, 38, 36, 3, '#fff', '#3a4054');
+    x.fillStyle = INK;
+    if(i === 2) x.fillRect(bx + 10, WY + 50, 14, 4);
+    else if(i === 1){ x.fillRect(bx + 10, WY + 36, 18, 3); x.fillRect(bx + 10, WY + 36, 3, 16); x.fillRect(bx + 25, WY + 36, 3, 16); x.fillRect(bx + 10, WY + 49, 18, 3); }
+    else { x.font = '16px ' + EN; x.textAlign = 'center'; x.fillText('x', bx + 20, WY + 45); x.textAlign = 'left'; }
+  }
+  /* 일러스트 */
+  x.fillStyle = '#0b0b0b'; x.fillRect(PADX - 5, IY - 5, IW + 10, IH + 10);
+  x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+  x.drawImage(img, PADX, IY, IW, IH);
+  bevel(PADX - 5, IY - 5, IW + 10, IH + 10, 5, '#3a4054', '#ffffff');
+  /* No. 배지 / 등급 태그 */
+  x.font = '20px ' + EN;
+  x.fillStyle = BLUE; x.fillRect(PADX + 16, IY + 16, 172, 48);
+  bevel(PADX + 16, IY + 16, 172, 48, 3, '#6f86ff', '#0a1770');
+  x.fillStyle = '#fff'; x.fillText('No.' + pad2(it.no) + '/' + pad2(gachaPool.length), PADX + 30, IY + 42);
+  var tw = x.measureText(it.tag).width + 66;
+  x.fillStyle = '#fff'; x.fillRect(PADX + IW - 16 - tw, IY + 16, tw, 48);
+  bevel(PADX + IW - 16 - tw, IY + 16, tw, 48, 3, '#0b0e22', '#0b0e22');
+  x.fillStyle = BLUE; x.fillText('★ ' + it.tag, PADX + IW - tw, IY + 42);
+  /* 이름표 */
+  x.fillStyle = '#f5f6f8'; x.fillRect(PADX - 5, PY, IW + 10, PH);
+  bevel(PADX - 5, PY, IW + 10, PH, 4, '#8c92a3', '#ffffff');
+  x.fillStyle = BLUE; x.font = '16px ' + EN; x.fillText('DOT LOVE ARCHIVE', PADX + 24, PY + 44);
+  x.fillStyle = INK; x.font = 'bold 54px ' + KR;
+  var ts = 54; while(x.measureText(it.cap).width > IW - 48 && ts > 30){ ts -= 2; x.font = 'bold ' + ts + 'px ' + KR; }
+  x.fillText(it.cap, PADX + 22, PY + 108);
+  x.fillStyle = SUB; x.font = '28px ' + KR; x.fillText(it.hand, PADX + 24, PY + 166);
+  x.fillStyle = '#b4b9c6'; for(i = PADX + 24; i < PADX + IW - 24; i += 16) x.fillRect(i, PY + 200, 9, 3);
+  x.fillStyle = SUB; x.font = '24px ' + KR; x.fillText((it.date || todayStr()) + ' 획득', PADX + 24, PY + 232);
+  /* GET! 도장 */
+  x.save(); x.translate(PADX + IW - 118, PY + 12); x.rotate(-0.17);
+  x.fillStyle = 'rgba(255,255,255,.95)'; x.fillRect(-96, -44, 192, 88);
+  x.strokeStyle = '#e0303a'; x.lineWidth = 6; x.strokeRect(-86, -34, 172, 68);
+  x.lineWidth = 2; x.strokeRect(-94, -42, 188, 84);
+  x.fillStyle = '#e0303a'; x.font = '30px ' + EN; x.textAlign = 'center'; x.fillText('GET!', 2, 3);
+  x.restore(); x.textAlign = 'left';
+  /* 바닥 줄 */
+  var FY = PY + PH + 44;
+  x.fillStyle = BLUE; x.font = '24px ' + EN; x.fillText('SAVE Heendy', PADX, FY);
+  x.fillStyle = SUB; x.font = '26px ' + KR; x.textAlign = 'right'; x.fillText('@sharebox.xr', PADX + IW, FY);
+  x.textAlign = 'left';
+  return c.toDataURL('image/jpeg', 0.92);
+}
+
+/* 크게 보기 */
+var cardLb = null;
+function closeCard(){ if(cardLb){ cardLb.remove(); cardLb = null; } }
+function openCard(no){
+  var it = poolByNo(no); if(!it || !gachaSeen[it.cap]) return;
+  makeCard(it).then(function(url){
+    closeCard();
+    cardLb = document.createElement('div');
+    cardLb.className = 'card-lb';
+    cardLb.innerHTML = '<div class="mwin clb-win">'
+      + '<div class="mwin-hd"><span>DOT COLLECTION · ' + pad2(it.no) + '/' + pad2(gachaPool.length) + '</span><span class="sp"></span><span class="mx" data-clb-close>×</span></div>'
+      + '<div class="mwin-bd clb-bd"><img class="clb-img" src="' + url + '" alt="' + it.cap + '">'
+      + '<div class="clb-hint">저장이 안 되면 이미지를 길게 눌러 저장하세요</div>'
+      + '<div class="pw-actions"><button class="gbtn" type="button" data-save="' + it.no + '">이미지 저장</button>'
+      + '<button class="gbtn" type="button" data-clb-close>닫기</button></div></div></div>';
+    document.body.appendChild(cardLb);
+  }, function(){});
+}
+/* 이미지 저장: 폰은 공유 시트(사진 앱에 저장), 그 외에는 파일 내려받기 */
+function saveCard(no){
+  var it = poolByNo(no); if(!it || !gachaSeen[it.cap]) return;
+  makeCard(it).then(function(url){
+    var name = 'pixelin-dot-' + pad2(it.no) + '.jpg';
+    var download = function(){
+      var a = document.createElement('a'); a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      toast('이미지 저장을 시작했어요');
+    };
+    var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    if(!coarse || !navigator.canShare || !window.fetch || typeof File !== 'function'){ download(); return; }
+    fetch(url).then(function(r){ return r.blob(); }).then(function(b){
+      var f = new File([b], name, {type:'image/jpeg'});
+      if(!navigator.canShare({files:[f]})){ download(); return; }
+      return navigator.share({files:[f]}).catch(function(e){ if(!e || e.name !== 'AbortError') download(); });
+    }).catch(download);
+  }, function(){});
+}
+document.addEventListener('click', function(e){
+  var t = e.target && e.target.closest ? e.target : null; if(!t) return;
+  var s = t.closest('[data-save]'), c = t.closest('[data-card]');
+  if(s){ saveCard(s.getAttribute('data-save')); return; }
+  if(c){ openCard(c.getAttribute('data-card')); return; }
+  if(t.closest('[data-clb-close]') || t === cardLb) closeCard();
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeCard();
+  else if((e.key === 'Enter' || e.key === ' ') && e.target && e.target.classList && e.target.classList.contains('gc-slot') && e.target.hasAttribute('data-card')){
+    e.preventDefault(); openCard(e.target.getAttribute('data-card'));
+  }
+});
 
 var gm = $('gachaMachine'), gachaHint = gm && gm.querySelector('.tap-hint');
 var GACHA_HINT = '터치하면 뽑기! ▶';
@@ -1435,9 +1765,10 @@ function renderGachaCol(){
   var html = '<div class="gacha-col">';
   for(var i=0;i<gachaPool.length;i++){
     var on = !!gachaSeen[gachaPool[i].cap];
-    html += '<div class="gc-slot' + (on ? ' on ic-' + gachaPool[i].img : '') + '">' + (on ? '' : '?') + '</div>';
+    html += '<div class="gc-slot' + (on ? ' on ic-' + gachaPool[i].img + '" role="button" tabindex="0" aria-label="' + gachaPool[i].cap + ' 크게 보기" data-card="' + gachaPool[i].no : '') + '">' + (on ? '' : '?') + '</div>';
   }
-  outGacha.innerHTML = html + '</div><div class="gc-lab">도트 컬렉션 <b>' + gachaUniq + '/' + gachaPool.length + '</b></div>';
+  outGacha.innerHTML = html + '</div><div class="gc-lab">도트 컬렉션 <b>' + gachaUniq + '/' + gachaPool.length + '</b></div>'
+    + (gachaUniq ? '<div class="gc-hint">모은 도트를 누르면 카드로 크게 보고 저장할 수 있어요</div>' : '');
 }
 
 function drawGacha(){
@@ -1456,26 +1787,39 @@ function drawGacha(){
     var dud = Math.random() < GACHA_DUD_RATE;
     var r = dud ? gachaDud : gachaPool[rnd(gachaPool.length)];
 
-    if(!dud && !gachaSeen[r.cap]){ gachaSeen[r.cap] = 1; gachaUniq++; }
+    if(!dud && !gachaSeen[r.cap]){ gachaSeen[r.cap] = 1; gachaUniq++; r.date = todayStr(); }
     renderGachaCol();
     var isNew = !dud && grant('goggles');            /* 꽝이 아닐 때 클리어 */
     gachaBusy = false;
 
-    showStageEnd({
-      host:gachaEndHost, overlay:true, stage:'stage-gacha',
-      ok:!dud, stamp:isNew,
-      title: dud ? 'TRY AGAIN' : '★ STAGE 01 CLEAR ★',
-      top:'<div class="polaroid se-polaroid' + (dud ? ' dud' : '') + '">'
+    var polaroid = '<div class="polaroid se-polaroid' + (dud ? ' dud' : '') + '">'
         +   '<div class="pic ic-' + r.img + '"></div>'
         +   '<div class="pcap">' + r.cap + '</div>'
         +   '<div class="hand">' + r.hand + '</div>'
-        + '</div>',
-      score:gachaUniq + '/' + gachaPool.length, small:true, scoreLabel:'도트 컬렉션',
-      gear:'goggles', gearNew:isNew,
-      note:gachaUniq >= gachaPool.length ? '컴플리트! 도트 4종 전부 모았어요 ★' : (dud ? '다시 뽑으면 도트가 나올지도?' : '다시 뽑으면 못 본 도트가 나올지도?'),
-      replayLabel:'다시 뽑기',
-      onReplay:drawGacha
-    });
+        + '</div>';
+    var open = function(topHtml){
+      if(location.hash !== '#stage-gacha') return;
+      showStageEnd({
+        host:gachaEndHost, overlay:true, stage:'stage-gacha',
+        ok:!dud, stamp:isNew,
+        title: dud ? 'TRY AGAIN' : '★ STAGE 01 CLEAR ★',
+        top:topHtml,
+        score:gachaUniq + '/' + gachaPool.length, small:true, scoreLabel:'도트 컬렉션',
+        gear:'goggles', gearNew:isNew,
+        note:gachaUniq >= gachaPool.length ? '컴플리트! 도트 4종 전부 모았어요 ★' : (dud ? '다시 뽑으면 도트가 나올지도?' : '다시 뽑으면 못 본 도트가 나올지도?'),
+        replayLabel:'다시 뽑기',
+        onReplay:drawGacha
+      });
+    };
+    if(dud){ open(polaroid); }
+    else {                                           /* 뽑은 도트는 카드로 꾸며서 보여줌 (실패하면 폴라로이드로) */
+      makeCard(r).then(function(url){
+        open('<div class="se-cardwrap">'
+          + '<button class="se-card" type="button" data-card="' + r.no + '" aria-label="크게 보기"><img src="' + url + '" alt="' + r.cap + '"></button>'
+          + '<div class="se-cardbtns"><button class="chip" type="button" data-card="' + r.no + '">크게 보기</button>'
+          + '<button class="chip" type="button" data-save="' + r.no + '">이미지 저장</button></div></div>');
+      }, function(){ open(polaroid); });
+    }
   }, reduce ? 150 : 900);
 }
 
@@ -1491,6 +1835,8 @@ if(gm){
    ========================================================= */
 var ERR_MSGS = ['도트가 너무 귀여워서 시스템이 멈췄습니다.','PIXELIN.exe 이(가) 응답하지 않습니다.',
   '접근 거부: 이 구역은 픽셀린이 점령했습니다.','메롱~♥ 이 창은 닫을 수 없어… 농담이야.','메모리 부족: 도트 사랑이 넘칩니다.'];
+var PEACE_MSGS = ['게임 아카이브를 지켜줘서 고마워요!','덕분에 도트가 전부 제자리로 돌아왔어요.','구조대원 최고! 정말 든든했어요.',
+  '게임 아카이브에 또 놀러 오세요.','오늘도 좋은 하루 보내세요!'];
 var ERR_GOAL = 25, ERR_SEC = 20, ERR_MAX_WIN = 8;
 
 var errTpl   = $('errTpl'),
@@ -1511,7 +1857,12 @@ function spawnError(){
   var w = errTpl.content.firstElementChild.cloneNode(true);
   w.style.left = rnd(Math.max(1, errW - 236)) + 'px';
   w.style.top  = rnd(Math.max(1, errH - 110)) + 'px';
-  w.querySelector('.em').textContent = ERR_MSGS[rnd(ERR_MSGS.length)];
+  w.querySelector('.em').textContent = allClear ? PEACE_MSGS[rnd(PEACE_MSGS.length)] : ERR_MSGS[rnd(ERR_MSGS.length)];
+  if(allClear){                                     /* 평화 모드: 오류창 대신 감사 편지 */
+    w.querySelector('.eb span').textContent = '♥ THANK YOU';
+    w.querySelector('.ei').textContent = '♥';
+    w.querySelector('.ok').textContent = '받기';
+  }
   desk.appendChild(w);
 }
 /* 이벤트 위임: 창마다 리스너를 달지 않음 */
@@ -1553,6 +1904,15 @@ function errStart(){
 }
 function errEnd(){
   errStop();
+  if(allClear){
+    showStageEnd({
+      host:errEndHost, overlay:true, onClose:errReset, stage:'stage-error',
+      title:'★ THANK YOU ★', score:String(errScore), scoreLabel:'받은 감사 편지',
+      gear:null, note:'편지를 ' + errScore + '통 받았어요. 아카이브가 다시 평화로워졌어요!',
+      replayLabel:'다시 받기', onReplay:function(){ errStart(); }
+    });
+    return;
+  }
   var ok = errScore >= ERR_GOAL;
   var isNew = ok && grant('headset');
   showStageEnd({
@@ -1614,7 +1974,7 @@ function whPop(t){
   for(var k=0; k<count && down.length; k++){
     var h = down.splice(rnd(down.length), 1)[0];
     h.classList.remove('hit');
-    var mel = h.querySelector('.mole'); if(mel) mel.className = 'mole ic-mon' + (1 + rnd(6));
+    var mel = h.querySelector('.mole'); if(mel) mel.className = allClear ? 'mole ic-jel' + (1 + rnd(3)) : 'mole ic-mon' + (1 + rnd(6));
     h.classList.add('up');
     h._until = t + (reduce ? 400 : 700 + Math.random()*350);
   }
@@ -1672,6 +2032,15 @@ function whStart(){
 function whEnd(){
   whStop();
   for(var i=0;i<holes.length;i++) holes[i].classList.remove('up','hit');
+  if(allClear){
+    showStageEnd({
+      host:moleArea, overlay:true, onClose:whReset, stage:'stage-zap',
+      title:'★ PLAY TIME ★', score:String(whScore), scoreLabel:'젤뽀와 논 횟수',
+      gear:null, note:'젤뽀가 신나게 놀았어요. 또 놀아 주세요!',
+      replayLabel:'한 번 더 놀기', onReplay:function(){ whStart(); }
+    });
+    return;
+  }
   var ok = whScore >= WH_GOAL;
   var isNew = ok && grant('vest');
   showStageEnd({
@@ -1701,21 +2070,32 @@ var HACK_LOG=[
   {at:80,t:'포탈 게이트 잠금 해제...'},
   {at:94,t:'최종 인증 우회...'}
 ];
+var PEACE_LOG=[
+  {at:5, t:'게임 아카이브 가는 길 찾는 중...'},
+  {at:22,t:'흰디에게 방문 알리기... [OK]', ok:true},
+  {at:42,t:'닥터 H에게 인사 준비 중...'},
+  {at:62,t:'젤뽀들 마중 나오는 중... [OK]', ok:true},
+  {at:80,t:'아카이브 문 여는 중...'},
+  {at:94,t:'거의 다 왔어요...'}
+];
 var hackProg=0, hacking=false, hackDone=false, hackIv=null;
 var HACK_UP=100/(3000/30), HACK_DOWN=100/(1100/30);   /* 3초 상승 / ~1.1초 하강 */
 
 function hackRender(){
   if(hackLog){
-    var out='';
-    for(var i=0;i<HACK_LOG.length;i++){
-      if(hackProg>=HACK_LOG[i].at) out+='<div class="ln'+(HACK_LOG[i].ok?' ok':'')+'">'+HACK_LOG[i].t+'</div>';
+    var out='', L = allClear ? PEACE_LOG : HACK_LOG;
+    for(var i=0;i<L.length;i++){
+      if(hackProg>=L[i].at) out+='<div class="ln'+(L[i].ok?' ok':'')+'">'+L[i].t+'</div>';
     }
-    if(hackDone) out+='<div class="ln grant">★ ACCESS GRANTED — 도트 포탈 개통! ★</div>';
-    else if(hackProg<=0) out='<div class="ln">대기 중... 아래 빨간 버튼을 꾹 누르세요.</div>';
+    if(hackDone) out+='<div class="ln grant">'+(allClear ? '★ 게임 아카이브 도착! ★' : '★ ACCESS GRANTED — 도트 포탈 개통! ★')+'</div>';
+    else if(hackProg<=0) out='<div class="ln">'+(allClear ? '대기 중... 아래 파란 버튼을 꾹 누르세요.' : '대기 중... 아래 빨간 버튼을 꾹 누르세요.')+'</div>';
     hackLog.innerHTML=out;
   }
   if(hackFill) hackFill.style.width=hackProg+'%';
   if(hackPct) hackPct.textContent=Math.round(hackProg)+'%';
+}
+function hackBtnLabel(done){
+  return allClear ? (done ? '도착!' : '꾹 눌러서<br>놀러 가기') : (done ? 'ACCESS<br>GRANTED' : 'HOLD<br>TO HACK');
 }
 function hackStop(){ if(hackIv){ clearInterval(hackIv); hackIv=null; } }
 function hackTick(){
@@ -1733,33 +2113,60 @@ function hackDown(e){
   if(!hackIv) hackIv=setInterval(hackTick, 30);
 }
 function hackUp(){ hacking=false; if(hackBtn) hackBtn.classList.remove('holding'); }
+/* 클리어: 화면 지지직 → "포탈 생성 완료" → 비하인드로 자동 이동 */
+var glitchEl = null, glitchT1 = null, glitchT2 = null;
+function glitchClear(){
+  clearTimeout(glitchT1); clearTimeout(glitchT2);
+  if(desktopEl) desktopEl.classList.remove('glitching');
+  if(glitchEl){ glitchEl.remove(); glitchEl = null; }
+}
 function hackComplete(){
   hackDone=true; hacking=false; hackStop();
-  if(hackBtn){ hackBtn.classList.remove('holding'); hackBtn.classList.add('done'); hackBtn.innerHTML='ACCESS<br>GRANTED'; }
+  if(hackBtn){ hackBtn.classList.remove('holding'); hackBtn.classList.add('done'); hackBtn.innerHTML=hackBtnLabel(true); }
   hackRender();
-  hackShowEnd(grant('helmet'));
-}
-function hackShowEnd(isNew){
-  showStageEnd({
-    host:hackEndHost, overlay:true, stamp:isNew, stage:'stage-portal',
-    title:'★ STAGE 04 CLEAR ★', score:'100%', small:true, scoreLabel:'포탈 해킹 완료율',
-    gear:'helmet', gearNew:isNew,
-    note:'도트 포탈을 개통했어요. 이제 비하인드 스토리로!',
-    replayLabel:'다시 해킹하기',
-    onReplay:function(){ hackDone=false; hackProg=0; hacking=false; hackReset(); }
-  });
-}
-function hackReset(){
-  hackStop();
-  clearStageEnd(hackEndHost);
-  if(hackDone){
-    if(hackBtn){ hackBtn.classList.remove('holding'); hackBtn.classList.add('done'); hackBtn.innerHTML='ACCESS<br>GRANTED'; }
-    hackProg=100; hackRender(); hackShowEnd(false);
-  } else {
-    hackProg=0; hacking=false;
-    if(hackBtn){ hackBtn.classList.remove('holding','done'); hackBtn.innerHTML='HOLD<br>TO HACK'; }
-    hackRender();
+  grant('helmet');
+
+  glitchClear();
+  if(allClear){                                     /* 평화 모드: 지지직 없이 도착 화면 → 홈으로 */
+    glitchEl = document.createElement('div');
+    glitchEl.className = 'glitch-ov done peace';
+    glitchEl.innerHTML = '<div class="gl-msg"><div class="gl-en en">WELCOME</div>'
+      + '<div class="gl-kr">게임 아카이브 도착!</div>'
+      + '<div class="gl-sub">흰디와 닥터 H가 기다리고 있어요. 홈으로 이동합니다…</div></div>';
+    document.body.appendChild(glitchEl);
+    glitchT2 = setTimeout(function(){
+      var el = glitchEl; glitchEl = null;
+      location.hash = '#home';
+      if(el){ el.classList.add('out'); setTimeout(function(){ el.remove(); }, 320); }
+    }, reduce ? 1700 : 2300);
+    return;
   }
+  glitchEl = document.createElement('div');
+  glitchEl.className = 'glitch-ov';
+  glitchEl.innerHTML = '<div class="gl-noise"></div>'
+    + '<div class="gl-msg"><div class="gl-en en">PORTAL OPEN</div>'
+    + '<div class="gl-kr">포탈 생성 완료</div>'
+    + '<div class="gl-sub">비하인드 스토리로 이동합니다…</div></div>';
+  document.body.appendChild(glitchEl);
+  if(!reduce && desktopEl) desktopEl.classList.add('glitching');
+
+  glitchT1 = setTimeout(function(){                 /* 지지직 끝 → 완료 문구 */
+    if(desktopEl) desktopEl.classList.remove('glitching');
+    if(glitchEl) glitchEl.classList.add('done');
+  }, reduce ? 0 : 1000);
+  glitchT2 = setTimeout(function(){                 /* 자동으로 비하인드로 */
+    var el = glitchEl; glitchEl = null;
+    location.hash = '#lore';
+    if(el){ el.classList.add('out'); setTimeout(function(){ el.remove(); }, 320); }
+  }, reduce ? 1700 : 2900);
+}
+/* 스테이지에 다시 들어오면 처음 상태로 (다시 해킹 가능, 헬멧은 유지) */
+function hackReset(){
+  hackStop(); glitchClear();
+  clearStageEnd(hackEndHost);
+  hackDone=false; hackProg=0; hacking=false;
+  if(hackBtn){ hackBtn.classList.remove('holding','done'); hackBtn.innerHTML=hackBtnLabel(false); }
+  hackRender();
 }
 if(hackBtn){
   hackBtn.addEventListener('pointerdown', hackDown);
@@ -1783,7 +2190,7 @@ var views = $$('.view'), navLinks = $$('#nav a');
 
 function stopAll(){
   errStop(); whStop(); hackStop(); gachaStop();
-  stampClear();
+  stampClear(); glitchClear(); closeCard();
   $$('.stage-end.fixed').forEach(function(e){            /* 페이지를 옮기면 떠 있던 결과 오버레이 닫기 */
     if(e.id === 'quizEnd') quizEndInline(); else e.remove();
   });
@@ -1866,6 +2273,7 @@ function solve(){
   qtext.textContent = ''; optsEl.textContent = ''; qcount.textContent = '';
   msg.textContent = '✔ 브리핑 완료 — 준비 완료!';
   grant('badge');                                   /* 퀴즈 올클리어(최종) → 대원 명찰 */
+  setAllClear();
 
   $('reveal').classList.add('show');
   confettiBurst();
@@ -1886,6 +2294,34 @@ if(quizEndEl){
   var _qx = $('quizEndX'); if(_qx) _qx.addEventListener('click', quizEndInline);
   quizEndEl.addEventListener('click', function(e){
     if(e.target === quizEndEl && quizEndEl.classList.contains('fixed') && now() - quizEndBorn > 700) quizEndInline();
+  });
+}
+/* 전부 클리어: 홈의 미션 브리핑·픽셀린 문구를 엔딩으로 교체 */
+function setAllClear(){
+  allClear = true;
+  document.body.classList.add('all-clear');
+  var T = {
+    hdError:'<span class="k">02</span> 감사 편지 받기',
+    descError:'평화를 되찾은 아카이브에서 <b>감사 편지</b>가 도착했어요! <b>20초</b> 동안 편지 창의 <span class="blip">받기</span>를 눌러 최대한 많이 받아 보세요.',
+    errLab:'받은 편지', errGoal:'',
+    hdZap:'<span class="k">03</span> 젤뽀랑 놀기',
+    descZap:'젤뽀들이 놀러 왔어요! <b>20초</b> 동안 쏙 올라온 <span class="blip">젤뽀</span>를 터치해서 같이 놀아 주세요.',
+    whLab:'젤뽀와 논 횟수', whGoal:'',
+    hdPortal:'<span class="k">04</span> 게임 아카이브로 놀러 가기',
+    descPortal:'흰디와 닥터 H가 지키는 게임 아카이브로 놀러 가요. 가운데 <b>파란 버튼을 꾹 누르고</b> 있으면 가까워지고, 손을 떼면 다시 멀어져요. <span class="blip">100%</span>가 되면 도착!',
+    hackBarTxt:'guest@GAME-ARCHIVE:~/visit',
+    portalNext:'홈으로 ▶'
+  };
+  Object.keys(T).forEach(function(id){ var e = $(id); if(e) e.innerHTML = T[id]; });
+  var pn = $('portalNext'); if(pn) pn.setAttribute('href', '#home');
+  var NAVT = {'#stage-error':'편지', '#stage-zap':'젤뽀', '#stage-portal':'아카이브'};
+  navLinks.forEach(function(a){ var t = NAVT[a.getAttribute('href')]; if(t) a.textContent = t; });
+  VIEWS['stage-error'] = '감사 편지 받기'; VIEWS['stage-zap'] = '젤뽀랑 놀기'; VIEWS['stage-portal'] = '게임 아카이브로 놀러 가기';
+  var pairs = [['briefPanel','endingPanel'], ['tickHack','tickClear']];
+  pairs.forEach(function(pr){
+    var off = $(pr[0]), on = $(pr[1]);
+    if(off) off.hidden = true;
+    if(on) on.hidden = false;
   });
 }
 function confettiBurst(){
@@ -2009,6 +2445,68 @@ function quizGate(){
   if(term) term.hidden = locked;
   if(locked){ var rev = $('reveal'); if(rev) rev.classList.remove('show'); }
 }
+/* =========================================================
+   12. 접속 0.5초 뒤 해킹 인트로 (초록 글자 비 + 픽셀린) — 버튼 하나만 누를 수 있음
+   ========================================================= */
+(function(){
+  var CH = '픽셀린도트사랑단메롱접수완료해킹01'.split('');
+  var FS = 18, ov = null, cv = null, cx = null, iv = null, cols = [];
+  function size(){
+    if(!cv) return;
+    cv.width = window.innerWidth; cv.height = window.innerHeight;
+    var n = Math.ceil(cv.width / FS); cols = [];
+    for(var i=0;i<n;i++) cols.push(-rnd(40));
+    cx.fillStyle = '#000'; cx.fillRect(0, 0, cv.width, cv.height);
+  }
+  function tick(){
+    cx.fillStyle = 'rgba(0,0,0,.09)'; cx.fillRect(0, 0, cv.width, cv.height);
+    cx.font = FS + 'px "Galmuri11",monospace'; cx.textBaseline = 'top';
+    for(var i=0;i<cols.length;i++){
+      var y = cols[i] * FS;
+      if(y >= 0){
+        cx.fillStyle = Math.random() < 0.08 ? '#d6ffe4' : '#00d455';
+        cx.fillText(CH[rnd(CH.length)], i * FS, y);
+      }
+      if(y > cv.height && Math.random() > 0.96) cols[i] = -rnd(12); else cols[i]++;
+    }
+  }
+  function close(){
+    if(!ov) return;
+    clearInterval(iv); window.removeEventListener('resize', size);
+    document.documentElement.style.overflow = '';
+    if(desktopEl) desktopEl.removeAttribute('inert');
+    var el = ov; ov = null;
+    el.classList.add('out'); setTimeout(function(){ el.remove(); }, 280);
+  }
+  function open(){
+    ov = document.createElement('div');
+    ov.className = 'hackintro';
+    ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
+    ov.innerHTML = '<canvas class="hi-rain"></canvas>'
+      + '<div class="hi-inner">'
+      +   '<div class="hi-box"><span class="hi-face ic-portrait" role="img" aria-label="픽셀린"></span>'
+      +     '<div class="hi-crew en">PIXELIN<small>DOT LOVE CREW</small></div></div>'
+      +   '<div class="hi-text">'
+      +     '<div class="hi-title">SAVE Heendy 사이트<br>접수를 선포한다</div>'
+      +     '<div class="hi-red">이 사이트는 지금부터 픽셀린의 도트 세계다.<br>되찾고 싶으면 내 스테이지를 전부 깨 보시지. 메롱~♥</div>'
+      +     '<ul class="hi-list"><li>픽셀린 : 사이트 침투, 도트 포탈 개발</li><li>오류 윈도우 : 화면 점령</li><li>몬스터들 : 방해 공작</li></ul>'
+      +   '</div>'
+      +   '<button class="hi-go" type="button">▶ 사이트 되찾으러 가기</button>'
+      + '</div>';
+    document.body.appendChild(ov);
+    document.documentElement.style.overflow = 'hidden';      /* 뒤 화면 스크롤·클릭 막기 */
+    if(desktopEl) desktopEl.setAttribute('inert', '');
+    cv = ov.querySelector('canvas'); cx = cv.getContext('2d');
+    size(); window.addEventListener('resize', size);
+    if(reduce){ for(var k=0;k<60;k++) tick(); }
+    else iv = setInterval(tick, 55);
+    var go = ov.querySelector('.hi-go');
+    go.addEventListener('click', close);
+    go.focus();
+  }
+  setTimeout(open, 500);
+})();
+
 buildGearLists();
 renderAvatar();
 renderGachaCol();
