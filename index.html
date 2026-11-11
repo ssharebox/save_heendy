@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="description" content="픽셀린넷 · DOT LOVE 아카이브 — 도트 세계를 점령한 픽셀린의 팬 아카이브 컨셉 데모">
 <meta name="theme-color" content="#122ab8">
 <title>픽셀린넷 · DOT LOVE 아카이브</title>
@@ -970,6 +970,105 @@ body{color:var(--ink);background-color:var(--desk);
 .glitch-ov.fail .gl-sub{line-height:1.8}
 .glitch-ov.fail .gl-sub b{color:#fff}
 .ht-log .ln.fail{color:#ff6b6b}
+
+/* 퀴즈 완료 창: 오버레이로 한 번 보여준 뒤, 페이지 안에서는 버튼 3개만 남김 */
+#quizEnd.inline .se-hd,#quizEnd.inline .se-congrats,#quizEnd.inline .se-scorerow,#quizEnd.inline .se-note,#quizEnd.inline .se-tip{display:none}
+#quizEnd.inline .se-box{background:none;border:0;box-shadow:none;padding:0;animation:none}
+#quizEnd.inline .se-bd{background:none;border:0;padding:0}
+#quizEnd.inline .se-btns{margin-top:4px}
+
+/* =========================================================
+   ★ 스마트폰 우선 보정 — 폴드 커버(280~340px)·짧은 화면·펼친 화면 대응
+   ========================================================= */
+/* 모달이 화면보다 길면 잘리지 않고 스크롤 */
+.modal{overflow-y:auto;align-items:flex-start;-webkit-overflow-scrolling:touch}
+.modal .mwin{margin:auto}
+.ht-bar{gap:8px}
+.ht-bar span:first-child{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ht-dots{flex:0 0 auto;white-space:nowrap}
+/* 손가락으로 누르는 기기: 오류창 버튼 키움 */
+@media (pointer:coarse){
+  .errwin .eb{padding:4px 6px}
+  .errwin .eb .x{width:32px;height:26px;font-size:9px}
+  .errwin .ok{padding:9px 28px;font-size:14px}
+  .se-x,.mwin-hd .mx{width:30px;height:26px;font-size:9px}
+}
+@media (max-height:700px){
+  .qr-img{min-height:150px}#qrImg{background-size:124px auto}
+  .qr-prize{font-size:19px;margin-bottom:7px}.qr-note{margin-top:10px;padding-top:12px}
+  .mwin-bd{padding:14px}
+}
+/* 아주 좁은 화면 (갤럭시 폴드 커버 화면 등) */
+@media (max-width:340px){
+  body{padding:8px 4px 36px}
+  .body-wrap{padding:8px}
+  .panel-bd{padding:12px}
+  .nav{gap:4px;padding:6px}
+  .nav a{padding:8px 8px;font-size:12px}
+  .titlebar .tt{font-size:12px}
+  .tbtn{width:17px;height:16px}
+  .p-desc,.lore{font-size:13px}
+  .lead{font-size:16px}
+  .bandbtn{font-size:14px;padding:13px 11px;gap:8px}
+  .se-btn{font-size:14px;padding:13px 8px}
+  .se-congrats{font-size:15px}
+  .heendy-name{font-size:20px}
+  .stage-end.fixed{padding:8px}
+  .bigstart{font-size:16px;padding:18px 28px}
+  .hack-btn{width:118px;height:118px}
+  .foot-links a{padding:8px 10px;font-size:12px}
+  .hi-inner{padding:16px 10px}
+  .hi-box{padding:12px 12px;gap:10px}
+  .hi-face{width:70px;height:72px;flex-basis:70px}
+  .hi-crew{font-size:11px}
+  .hi-text{margin-top:14px;padding:10px 10px 12px}
+  .hi-title{font-size:18px}
+  .hi-red{font-size:12px;margin-top:10px}
+  .hi-list{font-size:12px;line-height:1.7;margin-top:8px}
+  .hi-go{font-size:15px;padding:12px 14px;margin-top:14px}
+  .gl-kr{font-size:23px}
+  .stamp{font-size:17px}
+  .qr-linkbtn{font-size:13px;padding:11px 9px}
+  .bandbtn .arw,.qr-linkbtn .arw{display:none}
+}
+
+/* =========================================================
+   ★ 스마트폰 UI 정리 — 메뉴 한 줄 고정, 홈에 '시작/이어서 하기' 버튼, 장비·바로가기 압축
+   ========================================================= */
+.nav{position:sticky;top:0;z-index:50}
+.nav a{position:relative}
+.nav a.done::after{content:'✓';position:absolute;top:-6px;right:-4px;width:16px;height:16px;line-height:14px;text-align:center;
+  font-family:var(--f-sm);font-size:11px;color:#fff;background:#18a558;border:1px solid var(--black)}
+.home-cta{flex-direction:column;justify-content:center;align-items:center;gap:5px;text-align:center;margin-top:16px;padding:17px 12px;font-size:19px}
+.home-cta small{font-family:var(--f-sm);font-size:12px;opacity:.9}
+/* 내 장비: 아바타 왼쪽, 목록 오른쪽 */
+.mw-stack{display:grid;gap:14px}
+.mw-ava{order:1;display:grid;grid-template-columns:108px 1fr;column-gap:14px;align-items:center}
+.mw-ava .ava-stage{grid-row:1 / span 3;margin:0;padding:6px}
+.mw-ava .ava-rank{text-align:left;margin:0 0 6px}
+.mw-ava .gearbar{margin-bottom:6px}
+.mw-ava .gearlist{gap:3px}
+/* 바로가기: 아이콘 버튼 3개 한 줄 */
+.mobile-widgets .linkband{order:2;grid-template-columns:repeat(3,1fr);gap:8px;margin:0}
+.mobile-widgets .bandbtn{flex-direction:column;justify-content:center;gap:7px;padding:12px 4px;font-size:12px;text-align:center;line-height:1.3;box-shadow:2px 3px 0 rgba(8,10,30,.18)}
+.mobile-widgets .bandbtn .arw{display:none}
+.mobile-widgets .bandbtn .linkico{width:30px;height:30px;flex:0 0 30px}
+@media (max-width:600px){
+  .nav{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:7px}
+  .nav a{padding:10px 2px;text-align:center;font-size:13px}
+  .pagenav{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .pagenav a{text-align:center;padding:12px 6px}
+}
+@media (max-width:340px){
+  .nav{gap:3px;padding:5px}.nav a{font-size:12px;padding:9px 0}
+  .mw-ava{grid-template-columns:84px 1fr;column-gap:10px}
+  .home-cta{font-size:17px}
+  .mobile-widgets .bandbtn{font-size:11px;padding:11px 2px}
+}
+
+/* 두 번 터치(더블 탭) 확대 막기 — 스크롤과 터치는 그대로 */
+html,body,*{touch-action:manipulation}
+.hack-btn{touch-action:none}
 </style>
 </head>
 <body>
@@ -1007,9 +1106,6 @@ body{color:var(--ink);background-color:var(--desk);
     <a href="#stage-gacha">뽑기</a>
     <a href="#stage-error">오류</a>
     <a href="#stage-zap">몬스터</a>
-    <a href="#stage-portal">포탈</a>
-    <a href="#lore">비하인드</a>
-    <a href="#quiz">퀴즈</a>
   </nav>
 
   <div class="body-wrap">
@@ -1033,14 +1129,33 @@ body{color:var(--ink);background-color:var(--desk);
         ★ 게임 아카이브가 원래대로 돌아왔습니다 &nbsp;★ 흰디는 무사합니다 &nbsp;★ 닥터 H와 흰디가 아카이브를 지키고 있어요 &nbsp;★&nbsp;
       </div></div>
 
+      <!-- 전부 클리어한 뒤에만 보이는 엔딩 (미션 브리핑 자리를 대신함) -->
+      <section class="panel" id="endingPanel" hidden>
+        <div class="panel-hd"><span class="k">★</span> ALL CLEAR</div>
+        <div class="panel-bd notice">
+          <p class="lead">픽셀린으로부터 <b>흰디</b>를 지켰습니다.</p>
+          <p class="p-desc">닥터 H와 흰디는 다시 게임 아카이브를 관리하고 수호하는 일상으로 돌아갔습니다.</p>
+          <a class="bandbtn is-primary home-cta" href="#stage-zap">▶ 젤뽀랑 놀러 가기</a>
+        </div>
+      </section>
+
+      <section class="panel" id="briefPanel">
+        <div class="panel-hd"><span class="k">!</span> 미션 브리핑 · NOTICE.txt</div>
+        <div class="panel-bd notice">
+          <p class="lead">이 아카이브는 <b>픽셀린</b>이 점령했다.</p>
+          <p class="p-desc">아래 버튼을 누르면 다음 스테이지로 바로 이동해요. 스테이지를 깨고, <span class="blip">비하인드 스토리</span>를 읽은 뒤 <span class="blip">파이널 퀴즈</span>를 풀면 숨겨진 픽셀린 일러스트가 해금됩니다.</p>
+          <a class="bandbtn is-primary home-cta" id="homeCta" href="#stage-gacha">▶ 시작하기</a>
+        </div>
+      </section>
+
       <!-- 모바일/좁은 화면 전용 위젯 -->
       <section class="panel mobile-widgets">
-        <div class="panel-hd"><span class="k">▶</span> 바로가기 &amp; 접속 유저</div>
+        <div class="panel-hd"><span class="k">▶</span> 내 장비 &amp; 바로가기</div>
         <div class="panel-bd">
           <div class="mw-stack">
             <div class="linkband">
-              <a class="bandbtn js-home" target="_blank" rel="noopener"><span class="linkico ic-home"></span> 쉐어박스 홈페이지 <span class="arw">GO▶</span></a>
-              <a class="bandbtn js-insta" target="_blank" rel="noopener"><span class="linkico ic-insta"></span> 쉐어박스 인스타그램 <span class="arw">GO▶</span></a>
+              <a class="bandbtn js-home" target="_blank" rel="noopener"><span class="linkico ic-home"></span> 홈페이지 <span class="arw">GO▶</span></a>
+              <a class="bandbtn js-insta" target="_blank" rel="noopener"><span class="linkico ic-insta"></span> 인스타그램 <span class="arw">GO▶</span></a>
               <button class="bandbtn js-qrdraw" type="button"><span class="linkico ic-gacha"></span> 랜덤 뽑기 <span class="arw">GO▶</span></button>
             </div>
             <div class="mw-ava">
@@ -1057,24 +1172,6 @@ body{color:var(--ink);background-color:var(--desk);
               <ul class="gearlist gearList"></ul>
             </div>
           </div>
-        </div>
-      </section>
-
-      <!-- 전부 클리어한 뒤에만 보이는 엔딩 (미션 브리핑 자리를 대신함) -->
-      <section class="panel" id="endingPanel" hidden>
-        <div class="panel-hd"><span class="k">★</span> ALL CLEAR</div>
-        <div class="panel-bd notice">
-          <p class="lead">픽셀린으로부터 <b>흰디</b>를 지켰습니다.</p>
-          <p class="p-desc">닥터 H와 흰디는 다시 게임 아카이브를 관리하고 수호하는 일상으로 돌아갔습니다.</p>
-        </div>
-      </section>
-
-      <section class="panel" id="briefPanel">
-        <div class="panel-hd"><span class="k">!</span> 미션 브리핑 · NOTICE.txt</div>
-        <div class="panel-bd notice">
-          <p class="lead">이 아카이브는 <b>픽셀린</b>이 점령했다.</p>
-          <p class="p-desc">위 메뉴 탭에서 항목을 누르면 해당 페이지로 이동해요.
-          스테이지를 즐기고, <span class="blip">비하인드 스토리</span>를 읽은 뒤 <span class="blip">파이널 퀴즈</span>를 풀면 숨겨진 픽셀린 일러스트가 해금됩니다.</p>
         </div>
       </section>
 
@@ -1437,6 +1534,7 @@ function renderAvatar(){
   for(i=0;i<elFill.length;i++)  elFill[i].style.width = pct + '%';
   for(i=0;i<elCount.length;i++) elCount[i].textContent = n + '/' + GEAR.length;
   for(i=0;i<elRank.length;i++)  elRank[i].textContent = '구조대원';
+  updateProgressUI();
   var layers = document.querySelectorAll('.ava-layer[data-gear]');
   for(i=0;i<layers.length;i++){ layers[i].hidden = !owned[layers[i].getAttribute('data-gear')]; }
   gearRows.forEach(function(rows){
@@ -1448,6 +1546,28 @@ function renderAvatar(){
       li._st.textContent = on ? 'ON' : 'LOCK';
     });
   });
+}
+/* 홈의 '시작하기 / 이어서 하기' 버튼과 메뉴 탭의 클리어 표시 */
+var STEPS = [
+  ['goggles', '#stage-gacha',  'STAGE 01 · 도트 뽑기볼'],
+  ['headset', '#stage-error',  'STAGE 02 · 오류 윈도우'],
+  ['vest',    '#stage-zap',    'STAGE 03 · 몬스터 잡기'],
+  ['helmet',  '#stage-portal', 'STAGE 04 · 도트 포탈 해킹'],
+  ['badge',   '#lore',         '비하인드 스토리 → 파이널 퀴즈']
+];
+function updateProgressUI(){
+  var cta = $('homeCta'), i;
+  if(cta){
+    for(i=0;i<STEPS.length;i++) if(!owned[STEPS[i][0]]){
+      cta.setAttribute('href', STEPS[i][1]);
+      cta.innerHTML = (ownedCount() ? '▶ 이어서 하기' : '▶ 시작하기') + '<small>' + STEPS[i][2] + '</small>';
+      break;
+    }
+  }
+  var links = document.querySelectorAll('#nav a');
+  for(i=0;i<links.length;i++){
+    for(var j=0;j<3;j++) if(links[i].getAttribute('href') === STEPS[j][1]) links[i].classList.toggle('done', !!owned[STEPS[j][0]]);
+  }
 }
 /* 새로 획득했으면 true */
 function grant(k){
@@ -1871,8 +1991,10 @@ function errSet(){
 function spawnError(){
   if(!desk || desk.childElementCount >= ERR_MAX_WIN) return;
   var w = errTpl.content.firstElementChild.cloneNode(true);
-  w.style.left = rnd(Math.max(1, errW - 236)) + 'px';
-  w.style.top  = rnd(Math.max(1, errH - 110)) + 'px';
+  var ww = Math.min(230, errW - 10);                /* 좁은 화면(폴드 커버 등)에서는 창을 게임판 너비에 맞춤 */
+  w.style.width = ww + 'px';
+  w.style.left = rnd(Math.max(1, errW - ww - 6)) + 'px';
+  w.style.top  = rnd(Math.max(1, errH - 150)) + 'px';
   w.querySelector('.em').textContent = allClear ? PEACE_MSGS[rnd(PEACE_MSGS.length)] : ERR_MSGS[rnd(ERR_MSGS.length)];
   if(allClear){                                     /* 평화 모드: 오류창 대신 감사 편지 */
     w.querySelector('.eb span').textContent = '♥ THANK YOU';
