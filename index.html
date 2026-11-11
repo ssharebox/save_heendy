@@ -1138,6 +1138,50 @@ html,body,*{touch-action:manipulation}
 .cine-cap small{display:block;font-family:var(--f-sm);font-size:13px;margin-top:6px;opacity:.92}
 @media (max-width:420px){.cine-cap{font-size:21px;bottom:14%}}
 @media (prefers-reduced-motion:reduce){.cine.shake .cine-img,.cine.shake .cine-bg{animation:none}}
+
+/* =========================================================
+   ★ 폰을 가로로 돌렸을 때: 결과 창을 좌우 두 칸으로 펼쳐 스크롤 없이 한 화면에
+   ========================================================= */
+@media (orientation:landscape) and (max-height:520px){
+  .stage-end.fixed{padding:8px}
+  .stage-end.fixed .se-hd{padding:7px 8px}
+  .stage-end.fixed .se-bd{padding:12px 14px}
+  .stage-end.fixed .se-btn{padding:10px 8px;font-size:14px}
+  .stage-end.fixed .se-btns{margin-top:10px;gap:6px}
+  /* 뽑기 결과: 왼쪽 그림, 오른쪽 점수·버튼 */
+  .stage-end.fixed .se-box:has(.se-cardwrap,.se-polaroid){width:min(620px,100%)}
+  .stage-end.fixed .se-bd:has(.se-cardwrap,.se-polaroid){display:grid;grid-template-columns:auto 1fr;column-gap:20px;align-items:center}
+  .stage-end.fixed .se-bd:has(.se-cardwrap,.se-polaroid) > *{grid-column:2}
+  .stage-end.fixed .se-bd > .se-cardwrap,.stage-end.fixed .se-bd > .se-polaroid{grid-column:1;grid-row:1 / span 3;margin:0}
+  .stage-end.fixed .se-polaroid{max-width:210px}
+  .stage-end.fixed .se-card{max-width:150px}
+  .stage-end.fixed .se-cardbtns{margin-top:9px}
+  /* 미션 완료: 왼쪽 축하·명찰, 오른쪽 안내·버튼 */
+  #quizEnd.fixed .se-box{width:min(700px,100%)}
+  #quizEnd.fixed .se-bd{display:grid;grid-template-columns:1fr 1fr;column-gap:18px;align-items:center}
+  #quizEnd.fixed .se-congrats{grid-column:1;grid-row:1;margin-bottom:8px;font-size:16px}
+  #quizEnd.fixed .se-scorerow{grid-column:1;grid-row:2}
+  #quizEnd.fixed .se-note{grid-column:1;grid-row:3;margin-top:8px}
+  #quizEnd.fixed .se-tip{grid-column:2;grid-row:1;margin-top:0}
+  #quizEnd.fixed .se-btns{grid-column:2;grid-row:2 / span 2}
+  /* 랜덤 뽑기 결과: 왼쪽 QR, 오른쪽 안내·버튼 */
+  #qrModal .mwin{width:640px}
+  #qrResult{display:grid;grid-template-columns:200px 1fr;column-gap:18px;align-items:center}
+  #qrResult .qr-prize{grid-column:1;grid-row:1;margin-bottom:6px;font-size:18px}
+  #qrResult #qrImg{grid-column:1;grid-row:2;min-height:104px;background-size:92px auto}
+  #qrResult .qr-coupon{grid-column:1;grid-row:3;font-size:13px}
+  #qrResult .qr-note{grid-column:2;grid-row:1;margin-top:0;padding-top:0;font-size:13px}
+  #qrResult .qr-note::before{display:none}
+  #qrResult .qr-links{grid-column:2;grid-row:2;margin:0;gap:6px}
+  #qrResult .qr-terms{grid-column:2;grid-row:3;margin-top:0}
+  #qrResult .qr-linkbtn{padding:9px 10px;font-size:13px}
+  #qrResult .pw-actions{grid-column:1 / -1;grid-row:4;margin-top:4px}
+  #qrResult .qr-coupon{margin-top:6px}
+  #qrModal .mwin-bd{padding:10px 14px}
+  #qrModal{padding:8px}
+  #qrResult .pw-actions .gbtn{padding:6px 18px}
+  .stamp{font-size:22px;padding:13px 20px 10px}
+}
 </style>
 </head>
 <body>
