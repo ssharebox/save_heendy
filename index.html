@@ -963,6 +963,13 @@ body{color:var(--ink);background-color:var(--desk);
 .clb-wrap .clb-img{max-height:calc(100vh - 140px);max-height:calc(100dvh - 140px);box-shadow:0 0 0 1px #0b0e22,8px 10px 0 rgba(0,0,0,.45)}
 .clb-wrap .clb-hint{color:#c9cfee;margin-top:14px}
 .clb-wrap .pw-actions{margin-top:12px}
+
+/* 포탈 실패 화면 */
+.glitch-ov.fail .gl-en{color:#ff6b6b}
+.glitch-ov.fail .gl-kr{color:#ff4040;text-shadow:-3px 0 #4b68ff,3px 0 #fff}
+.glitch-ov.fail .gl-sub{line-height:1.8}
+.glitch-ov.fail .gl-sub b{color:#fff}
+.ht-log .ln.fail{color:#ff6b6b}
 </style>
 </head>
 <body>
@@ -1594,6 +1601,8 @@ var gachaPool = [
 ];
 var gachaDud = {cap:'꽝! 메롱~♥ 다시 뽑아봐', hand:'인형만 잔뜩… 메롱~♥', img:'gr-dud', dud:true};
 var GACHA_DUD_RATE = 0.55;   /* 꽝 확률 (0~1, 조정 지점) */
+var GACHA_PITY = 4;          /* 꽝이 이만큼 연속으로 나오면 다음 뽑기는 무조건 성공 (조정 지점) */
+var gachaDudStreak = 0;
 var SPIN = ['◜','◝','◞','◟'];
 var gachaBusy = false, gachaTick = null, gachaTimer = null;
 var gachaSeen = Object.create(null), gachaUniq = 0;
@@ -1790,7 +1799,8 @@ function drawGacha(){
   gachaTimer = setTimeout(function(){
     clearInterval(gachaTick);
     gachaIdle();
-    var dud = Math.random() < GACHA_DUD_RATE;
+    var dud = gachaDudStreak < GACHA_PITY && Math.random() < GACHA_DUD_RATE;
+    gachaDudStreak = dud ? gachaDudStreak + 1 : 0;
     var r = dud ? gachaDud : gachaPool[rnd(gachaPool.length)];
 
     if(!dud && !gachaSeen[r.cap]){ gachaSeen[r.cap] = 1; gachaUniq++; r.date = todayStr(); }
@@ -2107,9 +2117,49 @@ function hackStop(){ if(hackIv){ clearInterval(hackIv); hackIv=null; } }
 function hackTick(){
   if(hackDone){ hackStop(); return; }
   hackProg += hacking ? HACK_UP : -HACK_DOWN;
+  if(hacking && hackProg >= HACK_FAIL_AT){           /* 앞 스테이지를 안 깼으면 여기서 실패 */
+    var miss = hackMissing();
+    if(miss){ hackFail(miss); return; }
+  }
   if(hackProg>=100){ hackProg=100; hackRender(); hackComplete(); return; }
   if(hackProg<=0){ hackProg=0; hackRender(); if(!hacking) hackStop(); return; }
   hackRender();
+}
+/* 앞 스테이지(01~03)를 다 깨야 포탈이 열림 — 안 깬 첫 스테이지를 돌려줌 */
+var HACK_FAIL_AT = 62;
+var HACK_NEED = [
+  {k:'goggles', href:'#stage-gacha', lab:'STAGE 01 · 도트 뽑기볼'},
+  {k:'headset', href:'#stage-error', lab:'STAGE 02 · 오류 윈도우'},
+  {k:'vest',    href:'#stage-zap',   lab:'STAGE 03 · 몬스터 잡기'}
+];
+function hackMissing(){
+  for(var i=0;i<HACK_NEED.length;i++) if(!owned[HACK_NEED[i].k]) return HACK_NEED[i];
+  return null;
+}
+/* 포탈이 생성되다가 실패 → 아직 못 깬 스테이지로 강제 이동 */
+function hackFail(m){
+  hacking=false; hackStop();
+  if(hackBtn) hackBtn.classList.remove('holding');
+  if(hackLog) hackLog.innerHTML += '<div class="ln fail">ERROR — 포탈 에너지 부족!</div>';
+  glitchClear();
+  glitchEl = document.createElement('div');
+  glitchEl.className = 'glitch-ov fail';
+  glitchEl.innerHTML = '<div class="gl-noise"></div>'
+    + '<div class="gl-msg"><div class="gl-en en">PORTAL FAILED</div>'
+    + '<div class="gl-kr">포탈 생성 실패</div>'
+    + '<div class="gl-sub">아직 클리어하지 못한 스테이지가 있어요.<br><b>' + m.lab + '</b>로 이동합니다…</div></div>';
+  document.body.appendChild(glitchEl);
+  if(!reduce && desktopEl) desktopEl.classList.add('glitching');
+  glitchT1 = setTimeout(function(){
+    if(desktopEl) desktopEl.classList.remove('glitching');
+    if(glitchEl) glitchEl.classList.add('done');
+  }, reduce ? 0 : 700);
+  glitchT2 = setTimeout(function(){
+    var el = glitchEl; glitchEl = null;
+    hackProg = 0;
+    location.hash = m.href;
+    if(el){ el.classList.add('out'); setTimeout(function(){ el.remove(); }, 320); }
+  }, reduce ? 2000 : 3000);
 }
 function hackDown(e){
   if(hackDone) return;
